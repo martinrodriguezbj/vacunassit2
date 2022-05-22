@@ -1,0 +1,20 @@
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">Vacuna</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each turnos}}
+    <tr>
+            <th>{{vacuna}}</th>
+            <th>
+             <a href="/users/miperfil/edit/{{_id}}">
+             <input type="button" value="Cancelar turno">
+             </a>
+             </th>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

@@ -5,10 +5,14 @@ const {USER_ROLES} = require('../helpers/Roles');
 
 const UserSchema = new Schema({
     name: { type: String, required: true} ,
+    surname: { type: String, required: true}, 
     email: { type: String, required: true },
     password: { type: String, required: true },
     role: {type: String, enum: USER_ROLES},
-    date: { type: Date, default: Date.now}
+    date: { type: Date, default: Date.now},
+    dni: {type: String, required: true},
+    address: {type: String, required: false}
+   
 })
 
 UserSchema.methods.encryptPassword = async (password) => {

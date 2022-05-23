@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/pame', {
     //useCreateIndex: true,
-    //useNewUrlParser: true,
+    useNewUrlParser: true,
     //useFindAndModify: false
 })
     .then(db => console.log('DB is connected'))

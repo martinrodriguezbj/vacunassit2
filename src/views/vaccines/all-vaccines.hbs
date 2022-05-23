@@ -12,10 +12,17 @@
             <th>{{name}}</th>
             <th>{{dosis}}</th>
             <th>
-             <a href="/users/miperfil/edit/{{_id}}">
-             <input type="button" value="Modificar vacuna">
+             <a href="/vaccines/edit/{{_id}}">
+             <input type="button" value="Modificar vacuna"> 
+             <form action="/vaccines/delete/{{_id}}?_method=DELETE" method="POST"><!--habia un form y ya no lo hay-->
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="btn btn-danger btn-block btn-sm" type="submit">
+                      Eliminar
+                </button>
+            </form>
              </a>
              </th>
+            
     </tr>
     {{/each}}
   </tbody>

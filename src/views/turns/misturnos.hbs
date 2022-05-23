@@ -8,11 +8,17 @@
   <tbody>
     {{#each turnos}}
     <tr>
-            <th>{{vacuna}}</th>
+            <th>{{vaccineName}}</th>
             <th>
-             <a href="/users/miperfil/edit/{{_id}}">
-             <input type="button" value="Cancelar turno">
-             </a>
+             {{!-- <a href="/users/miperfil/edit/{{_id}}"> --}}
+             {{!-- <button class="btn btn btn-primary block" type="submit">Cancelar</button> --}}
+             <form action="/turns/delete/{{_id}}?_method=DELETE" method="POST">
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="btn btn-danger btn-block btn-sm" type="submit">
+                      Cancelar
+                </button>
+            </form>
+             {{!-- </a> --}}
              </th>
     </tr>
     {{/each}}

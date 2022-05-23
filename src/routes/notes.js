@@ -10,7 +10,6 @@ router.get('/notes/add', isAuthenticated, (req, res) => {
     res.render('notes/new-notes')
 });
 
-
 router.post('/notes/new-notes', isAuthenticated, async (req, res) => {
     const { title, description }= req.body  ;
     const errors = [];
@@ -40,29 +39,6 @@ router.get('/notes', isAuthenticated, async (req, res) => {
     const notes = await Note.find({user: req.user.id}).lean().sort({date: 'desc'});
     res.render('notes/all-notes', { notes });
 });
-
-//editado por mi
-router.get('/users/miperfil', async (req, res) => {
-    const usuarios = await User.find({email: req.user.email}).lean();
-    //console.log(usuarios);
-    res.render('users/miperfil', {usuarios});
-});
-
-
-router.get('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
-    const usuari = await User.findById(req.params.id).lean();
-    console.log(req.params.id);
-    res.render('users/edit', {usuari});
-})
-
-router.put('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
-    const { name, email }= req.body;
-    const us = await User.findByIdAndUpdate(req.params.id, {name, email });
-    //console.log({name});
-    req.flash('succes_msg', 'Datos actualizados correctamente');
-    res.redirect('/users/miperfil');
-})
-//hasta acá
 
 
 

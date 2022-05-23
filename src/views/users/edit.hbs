@@ -11,9 +11,22 @@
           <input type="text" name="name" class="form-control" value="{{usuari.name}}"/>
         </div>
         <div class="form-group">
-          <p>DNI</p>
-          <textarea name="email" class="form-control" readonly="readonly">{{usuari.email}}</textarea>
+          <p>APELLIDO</p>
+          <textarea name="surname" class="form-control" >{{usuari.surname}}</textarea>
         </div>
+        <div class="form-group">
+          {{!-- <p>DNI</p>
+          <textarea name="dni" class="form-control" readonly="readonly">{{usuari.dni}}</textarea>
+        </div> --}}
+        <div class="form-group">
+          <p>EMAIL</p>
+          <textarea name="email" class="form-control">{{usuari.email}}</textarea>
+        </div>
+        <div class="form-group">
+          <p>DIRECCIÓN</p>
+          <textarea name="address" class="form-control">{{usuari.address}}</textarea>
+        </div>
+
         <div class="form-group">
           <button class="btn btn-primary btn-block" type="submit">
             Save

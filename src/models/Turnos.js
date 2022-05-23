@@ -3,10 +3,12 @@ const { Schema } = mongoose;
 
 const TurnosSchema = new Schema({
     sede: { type: String, required: false},
-    vacuna: { type: String, required: true},
+    vaccineName: { type: String, required: true},
     date: { type: Date, default: Date.now},
     user: {type: String},
-    turnoAsginado: {type: Boolean}
+    appointed: {type: Boolean},
+    attended: {type: Boolean},
+    orderDate: {type: Date, required: false}
 })
 
 module.exports = mongoose.model('Turnos', TurnosSchema)

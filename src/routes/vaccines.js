@@ -22,22 +22,26 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
     //     res.render('vaccines/all-vaccines', {errors, name, dosis});
     //
     } else {
-        const vaccineName = await Vaccine.findOne( {dosis : dosis} && {name : name}); 
-        //    const vaccineDose = await Vaccine.findOne({dosis:dosis});
-        if (vaccineName){// && vaccineDose){
+    //     const notes = await Note.find({user: req.user.id}).lean().sort({date: 'desc'});
+    //     res.render('notes/all-notes', { notes });
+    // });
+        const vaccineName = await Vaccine.findOne( {dosis : dosis, name : name, user : req.user.id}); 
+        if (vaccineName){
             req.flash('error_msg', 'La vacuna ya se encuentra registrada');
-            res.redirect('/vaccines');
-            console.log(name);
-            console.log(dosis);    
+            res.redirect('/vaccines');    
         }else {
-            const newVaccine = new Vaccine({name, dosis});   
+            const newVaccine = new Vaccine({name, dosis});
+            if (name != 'Covid'){
+                newVaccine.dosis=0;
+            }   
             newVaccine.user = req.user.id;
             newVaccine.place = null; 
             newVaccine.lot = null; 
             newVaccine.date = null; 
             await newVaccine.save();
             req.flash('succes_msg', 'Se ha registrado una nueva vacuna.');
-        }    res.redirect('/vaccines');
+            res.redirect('/vaccines'); 
+        }
     }
 });
 

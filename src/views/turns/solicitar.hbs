@@ -5,16 +5,17 @@
     </div>
     <div class="card-body">
         <form action="/turns/solicitar" method="POST">
-        <div class="form group">
+        <div class="form group"> 
             <select name="vaccineName" class="">
-                <option value="covid1">Covid: dosis 1</option>
-                <option value="covid2">Covid: dosis 2</option>
-                <option value="gripe">Gripe</option>
+                <option value="Covid1" >Covid: dosis 1</option>
+                <option value="Covid2">Covid: dosis 2</option>
+                <option value="Gripe" onselect="hide">Gripe</option>
             </select>
         </div>
         <div class="form group">
             <button class="btn btn btn-primary block" type="submit">Solicitar</button>
         </div>
+
         </form>
     </div>
 </div>

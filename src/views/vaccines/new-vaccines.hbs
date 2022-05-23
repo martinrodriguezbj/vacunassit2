@@ -1,21 +1,18 @@
+<h2><center>Agregar vacuna</center></h2>
 <div class="col-md-4 mx-auto">
     <div class="card">
         <div class="card-header">
-            <h3>New Vaccine</h3>
+            <h3>Nueva vacuna</h3>
         </div>
         <div class="card-body">
         <form action="/vaccines/new-vaccines" method="POST">    
             <div class="form group">
                 <select name="name" class="">
-                    <option>Covid</option>
+                    <option>Covid: dosis 1</option>
+                    <option>Covid: dosis 2</option>
                     <option>Gripe</option>
                     <option>Fiebre Amarilla</option>
                 </select>
-                {{!-- <select name="dosis" class="">
-                    <option>1</option>
-                    <option>2</option>
-                </select> --}}
-            </div>
             <div class="form group">
                 <button class="btn btn btn-primary block" type="submit">Cargar vacuna</button>
             </div>

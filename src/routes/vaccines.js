@@ -12,8 +12,8 @@ router.get('/vaccines/add', isAuthenticated, (req, res) => {
 });
 
 router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
-    const { name, dosis } = req.body;
-
+    const { name } = req.body;
+    console.log(name);
     const errors = [];
     if (!name){
         errors.push({text: 'Debe elegir una vacuna'});
@@ -22,18 +22,15 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
     //     res.render('vaccines/all-vaccines', {errors, name, dosis});
     //
     } else {
-    //     const notes = await Note.find({user: req.user.id}).lean().sort({date: 'desc'});
-    //     res.render('notes/all-notes', { notes });
-    // });
-        const vaccineName = await Vaccine.findOne( {dosis : dosis, name : name, user : req.user.id}); 
-        if (vaccineName){
+        console.log(req.user.id);
+        const vaccineName = await Vaccine.findOne( { name: name, user: req.user.id}); 
+        //    const vaccineDose = await Vaccine.findOne({dosis:dosis});
+        if (vaccineName){// && vaccineDose){
+            console.log('vacuna ya registrada');
             req.flash('error_msg', 'La vacuna ya se encuentra registrada');
-            res.redirect('/vaccines');    
+            res.redirect('/vaccines'); 
         }else {
-            const newVaccine = new Vaccine({name, dosis});
-            if (name != 'Covid'){
-                newVaccine.dosis=0;
-            }   
+            const newVaccine = new Vaccine({name});
             newVaccine.user = req.user.id;
             newVaccine.place = null; 
             newVaccine.lot = null; 
@@ -42,13 +39,16 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
             req.flash('succes_msg', 'Se ha registrado una nueva vacuna.');
             res.redirect('/vaccines'); 
         }
+
     }
 });
 
 
 router.get('/vaccines', isAuthenticated, async (req, res) => {
     // Si el usuario es administrador, muestra todas las vacunas
-    console.log(req.user);
+
+    //console.log(req.user);
+    //console.log(req.user.id);
     const user = await User.findById(req.user.id).lean();
     if (user.role === ADMINISTRADOR) {
         const vaccines = await Vaccine.find({}).lean().sort({date: 'desc'});
@@ -83,8 +83,8 @@ router.get('/vaccines/edit/:id', isAuthenticated, async (req, res) => {
 }); 
 
 router.put('/vaccines/edit-vaccine/:id', isAuthenticated, async (req, res) => {
-    const { name, dosis }= req.body;
-    await Vaccine.findByIdAndUpdate(req.params.id, {name,dosis});
+    const { name }= req.body;
+    await Vaccine.findByIdAndUpdate(req.params.id, {name});
     req.flash('succes_msg', 'Vacuna actualizada correctamente');
     res.redirect('../');
 }); 

@@ -60,7 +60,7 @@ router.get('/users/logout', (req, res) => {
 
 //editado por mi
 router.get('/users/miperfil', async (req, res) => {
-    const usuarios = await User.find({email: req.user.email}).lean();
+    const usuarios = await User.find({dni: req.user.dni}).lean();
     //console.log(usuarios);
     res.render('users/miperfil', {usuarios});
 });

@@ -16,15 +16,16 @@ router.get('/turns/solicitar', (req, res) => {
 });
 
 router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
-    const { vaccineName }= req.body  ;
-    console.log(vaccineName);
+    const { vaccineName }= req.body ;
+    console.log('nombre turno:',vaccineName);
     const errors = [];
     if(!vaccineName){
         errors.push({text: 'Por favor seleccione una vacuna'});
     } else {
+        
         const vaccName = await Turno.findOne( {vaccineName : vaccineName, user : req.user.id});
         const vaccAplied= await Vaccine.findOne({name : vaccineName, user : req.user.id})
-        console.log(vaccName); 
+        //console.log('nombre:',vaccName); 
         if(vaccName){
             req.flash('error_msg', 'Ya tiene un turno pendiente para esta vacuna');
             res.redirect('/turns/misturnos'); 
@@ -33,7 +34,8 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                 req.flash('error_msg', 'Ya tiene aplicada esta vacuna, no puede solicitar un turno');
                 res.redirect('/turns/misturnos'); 
             }else{
-                const newTurno = new Turno({ vaccineName });
+                const newTurno = new Turno();
+                newTurno.vaccineName=vaccineName;
                 newTurno.user = req.user.id;
                 newTurno.appointed = false;
                 newTurno.attended = false;

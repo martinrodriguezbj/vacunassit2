@@ -1,8 +1,8 @@
+<h2><center>Mis vacunas</center></h2>
 <table class="table table-dark">
   <thead>
     <tr>
       <th scope="col">Nombre</th>
-      <th scope="col">Dosis</th>
       <th scope="col">Acciones</th>
     </tr>
   </thead>
@@ -10,7 +10,6 @@
     {{#each vaccines}}
     <tr>
             <th>{{name}}</th>
-            <th>{{dosis}}</th>
             <th>
              <a href="/vaccines/edit/{{_id}}">
              <input type="button" value="Modificar vacuna"> 

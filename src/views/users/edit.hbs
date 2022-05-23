@@ -1,0 +1,38 @@
+<div class="col-md-4 mx-auto">
+  <div class="card">
+    <div class="card-header">
+      <h3>Editar datos</h3>
+    </div>
+    <div class="card-body">
+      <form action="/users/miperfil/edit/{{usuari._id}}?_method=PUT" method="POST">
+        <input type="hidden" name="_method" value="PUT">
+        <div class="form-group">
+          <p>NOMBRE</p>
+          <input type="text" name="name" class="form-control" value="{{usuari.name}}"/>
+        </div>
+        <div class="form-group">
+          <p>APELLIDO</p>
+          <textarea name="surname" class="form-control" >{{usuari.surname}}</textarea>
+        </div>
+        <div class="form-group">
+          {{!-- <p>DNI</p>
+          <textarea name="dni" class="form-control" readonly="readonly">{{usuari.dni}}</textarea>
+        </div> --}}
+        <div class="form-group">
+          <p>EMAIL</p>
+          <textarea name="email" class="form-control">{{usuari.email}}</textarea>
+        </div>
+        <div class="form-group">
+          <p>DIRECCIÓN</p>
+          <textarea name="address" class="form-control">{{usuari.address}}</textarea>
+        </div>
+
+        <div class="form-group">
+          <button class="btn btn-primary btn-block" type="submit">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

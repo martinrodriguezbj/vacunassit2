@@ -1,0 +1,5 @@
+https://es.stackoverflow.com/questions/15191/c%C3%B3mo-asignar-roles-de-usuarios-en-nodejs-mongodb
+https://www.youtube.com/watch?v=jI4K7L-LI58&ab_channel=WebDevSimplified // ROLES NODEJS MONGODB
+
+DUDAS:
+como hacer para que en el navigation aparezca tal cosa para los admins y otra cosa para los pacientes

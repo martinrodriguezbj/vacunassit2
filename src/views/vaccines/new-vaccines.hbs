@@ -1,41 +1,24 @@
 <div class="col-md-4 mx-auto">
     <div class="card">
-    {{!-- <div class="card-header">
-        <h3>New Vaccine</h3>
+        <div class="card-header">
+            <h3>New Vaccine</h3>
+        </div>
+        <div class="card-body">
+        <form action="/vaccines/new-vaccines" method="POST">    
+            <div class="form group">
+                <select name="name" class="">
+                    <option>Covid</option>
+                    <option>Gripe</option>
+                </select>
+                <select name="dosis" class="">
+                    <option>1</option>
+                    <option>2</option>
+                </select>
+            </div>
+            <div class="form group">
+                <button class="btn btn btn-primary block" type="submit">Cargar vacuna</button>
+            </div>
+            </form>
+        </div>
     </div>
-    <div class="card-body">
-        <form action="/vaccines/new-vaccines" method="POST">
-        <div class="form group">
-            <input type="text" name="name" class="form-control" placeholder="Nombre de vacuna" autofocus>
-        </div>
-        <div class="form group">
-            <textarea type="number" name="dosis" class="form-control" placeholder="Dosis"></textarea>
-        </div>
-        <div class="form group">
-            <button class="btn btn btn-primary block" type="submit">Cargar vacuna</button>
-        </div>
-        </form>
-    </div> --}}
-    <div class="card-header">
-        <h3>New Vaccine</h3>
-    </div>
-    <div class="card-body">
-    <form action="/vaccines/new-vaccines" method="POST">    
-        <div class="form group">
-            <select name="name" class="">
-                <option>Covid</option>
-                <option>Covid</option>
-                <option>Gripe</option>
-            </select>
-            <select name="dosis" class="">
-                <option>1</option>
-                <option>2</option>
-            </select>
-        </div>
-        <div class="form group">
-            <button class="btn btn btn-primary block" type="submit">Cargar vacuna</button>
-        </div>
-        </form>
-    </div>
-</div>
 </div>

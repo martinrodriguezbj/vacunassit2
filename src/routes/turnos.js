@@ -57,11 +57,10 @@ router.get('/turns/turnosPasados', isAuthenticated, async (req, res) => {
 
 //hay que hacer ajustes, no me da el nombre, sòlo el id del objeto
 router.get('/turns/turnosVigentes', isAuthenticated, async (req, res) => {
-    const turnos = await Turno.find({user: req.user.id, attended : false}).lean().sort('desc');
+    const turnos = await Turno.find({user: req.user.id}, {attended : true}).lean().sort('desc');
     console.log(turnos); 
     res.render('turns/misturnosvigentes', { turnos});
 });
-
 
 router.get('/turns/misturnos', isAuthenticated, async (req, res) => {
     const turnos = await Turno.find({user: req.user.id}).lean().sort({date: 'desc'});

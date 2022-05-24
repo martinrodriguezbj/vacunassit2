@@ -25,7 +25,6 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
         
         const vaccName = await Turno.findOne( {vaccineName : vaccineName, user : req.user.id});
         const vaccAplied= await Vaccine.findOne({name : vaccineName, user : req.user.id})
-        //console.log('nombre:',vaccName); 
         if(vaccName){
             req.flash('error', 'Ya tiene un turno pendiente para esta vacuna');
             res.redirect('/turns/misturnos'); 
@@ -39,7 +38,7 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                 newTurno.user = req.user.id;
                 newTurno.appointed = false;
                 newTurno.attended = false;
-                newTurno.orderDate= new Date('2022-12-12');
+                newTurno.orderDate= null;
                 console.log(newTurno);
                 await newTurno.save();
                 req.flash('success_msg', 'turno agregado correctamente');
@@ -57,7 +56,7 @@ router.get('/turns/turnosPasados', isAuthenticated, async (req, res) => {
 
 //hay que hacer ajustes, no me da el nombre, sòlo el id del objeto
 router.get('/turns/turnosVigentes', isAuthenticated, async (req, res) => {
-    const turnos = await Turno.find({user: req.user.id}, {attended : true}).lean().sort('desc');
+    const turnos = await Turno.find({user: req.user.id, attended : false}).lean().sort('desc');
     console.log(turnos); 
     res.render('turns/misturnosvigentes', { turnos});
 });

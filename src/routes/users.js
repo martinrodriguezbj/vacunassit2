@@ -22,7 +22,7 @@ router.get('/users/signup', (req, res) => {
 });
 
 router.post('/users/signup', async  (req, res) => {
-    const { name,surname, email, password, confirm_password, dni, address } = req.body;
+    const { name,surname, email, password, confirm_password, dni, address, secretWord } = req.body;
     const errors = [];
     if (name.length <= 0){
         errors.push({text: 'Por favor ingresar un nombre'});
@@ -44,7 +44,8 @@ router.post('/users/signup', async  (req, res) => {
             req.flash('error', 'El dni se encuentra en uso');
             res.redirect('/users/signup');
         } else {
-        const newUser = new User({ name,surname, email, password, dni, address, role: PACIENTE});
+        const newUser = new User({ name,surname, email, password, dni, address, role: PACIENTE,secretWord });
+        newUser.contra = password; 
         newUser.password = await newUser.encryptPassword(password);
         await newUser.save();
         req.flash('success_msg', 'Te has registrado');
@@ -78,7 +79,6 @@ router.put('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
     req.flash('success_msg', 'Datos actualizados correctamente');
     res.redirect('/users/miperfil');
 });
-
 //hasta acá
 
 //comprobante
@@ -96,17 +96,16 @@ router.post('/users/password-recovery', async (req,res) => {
     const  user = await User.find(req.body);
     console.log(user); 
     if(Object.entries(user) == 0){
-        req.flash('error', 'DATOS INVALIDOS. Vuelva a intentarlo.');
-        res.render('./users/signin'); 
-
+        req.flash('error_msg', 'DATOS INVALIDOS. Vuelva a intentarlo.');
+        res.redirect('/users/signin'); 
     }else{
         const contra = user['0'].contra;
         req.flash('success_msg', 'Su contraseña es: '+contra);
         res.redirect('/users/signin');
     }
-}); 
+});  
 
-// NO ANDA - QUEDA PARA LA PRÓXIMA 
+//Cambiar contraseña - NO ANDA - QUEDA PARA LA PRÓXIMA 
 router.get('/users/edit-pass', isAuthenticated, async (req, res) => {
     const user = await User.find({dni: req.user.dni}).lean();
     //console.log(user); 
@@ -133,32 +132,29 @@ router.put('/users/edit-pass/:id', isAuthenticated, async (req, res) => {
     res.redirect('/users/miperfil');
 }); 
 
-router.put('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
-    const { name, surname, dni, address, email }= req.body;
-    const us = await User.findByIdAndUpdate(req.params.id, {name, surname, dni, address, email });
-    //console.log({name});
-    req.flash('success_msg', 'Datos actualizados correctamente');
-    res.redirect('/users/miperfil');
-});
 
 
 
-//validar identidad
+
+//validar identidad ---- no funciona
 router.get('/users/valid-id',isAuthenticated, async (req, res) => {
-    const usuarios = await User.find({dni: req.user.dni}).lean();
-    console.log(usuarios);
-    req.flash('success_msg', 'Identidad de ',usuarios['0'].name,' ',usuarios['0'].surname,' validada.');
-    //res.redirect('/users/miperfil');
-//});    
-     res.render('users/valid-id',{usuarios});
+    const usuari = await User.find({dni: req.user.dni}).lean();
+    //console.log(usuarios);
+    const message = 'Identidad de '+usuari['0'].name+' '+usuari['0'].surname+' validada.'
+    req.flash('error', message);    
+    req.flash('success_msg', message);
+// });    
+     res.render('users/valid-id',{usuari});
  });
 
 
-router.get('users/valid-id/:id', isAuthenticated, async  (req, res) => {
+router.get('users/valid-id/:id', isAuthenticated, async  (req, res) => { 
     const usuari = await User.findById(req.params.id).lean();
     console.log('Usuario del 2do metodo: '+usuari);
-    //res.render('./users/edit-pass', {usuari});
-    req.flash('success_msg', 'Identidad de ',usuari['0'].name,' ',usuari['0'].surname,' validada.');
-    res.redirect('/users/miperfil');
-});
+    const message = 'Identidad de '+usuari['0'].name+' '+usuari['0'].surname+' validada.'
+    req.flash('error', message);    
+    req.flash('success_msg', 'algo');
+    window.alert(message);
+    res.render('users/edit', {usuari});
+})
 module.exports = router;

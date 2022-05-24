@@ -38,7 +38,7 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                 newTurno.vaccineName=vaccineName;
                 newTurno.user = req.user.id;
                 newTurno.appointed = false;
-                newTurno.attended = true;
+                newTurno.attended = false;
                 newTurno.orderDate= new Date('2022-12-12');
                 console.log(newTurno);
                 await newTurno.save();
@@ -50,16 +50,16 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
 });
 
 router.get('/turns/turnosPasados', isAuthenticated, async (req, res) => {
-    const turnos = await Turno.find({user: req.user.id}, [{orderDate : {$lt : Date.now}}]).lean().sort('desc');
+    const turnos = await Turno.find({user: req.user.id, attended: true} /*, [{orderDate : {$lt : Date.now}}]*/).lean().sort('desc');
     console.log(turnos); 
-    res.render('turns/misturnos', { turnos });
+    res.render('turns/misturnospasados', { turnos });
 });
 
 //hay que hacer ajustes, no me da el nombre, sòlo el id del objeto
 router.get('/turns/turnosVigentes', isAuthenticated, async (req, res) => {
-    const turnos = await Turno.find({user: req.user.id}, {attended : false}).lean().sort('desc');
+    const turnos = await Turno.find({user: req.user.id, attended : false}).lean().sort('desc');
     console.log(turnos); 
-    res.render('turns/misturnos', { turnos});
+    res.render('turns/misturnosvigentes', { turnos});
 });
 
 

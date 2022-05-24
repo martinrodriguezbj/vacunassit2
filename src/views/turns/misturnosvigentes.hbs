@@ -1,27 +1,25 @@
-<h2><center>Mis turnos</center></h2>
+<h2><center>Mis turnos vigentes</center></h2>
 {{#if turnos}}
 <table class="table table-dark">
   <thead>
     <tr>
       <th scope="col">Vacuna</th>
-      <th scope="col">Fecha solicitado</th>
+      <th scope="col">Acciones</th>
     </tr>
   </thead>
   <tbody>
     {{#each turnos}}
     <tr>
             <th>{{vaccineName}}</th>
-            <th>{{date}}</th>
             <th>
              {{!-- <a href="/users/miperfil/edit/{{_id}}"> --}}
              {{!-- <button class="btn btn btn-primary block" type="submit">Cancelar</button> --}}
-             <!-- <form action="/turns/delete/{{_id}}?_method=DELETE" method="POST">
+             <form action="/turns/delete/{{_id}}?_method=DELETE" method="POST">
                 <input type="hidden" name="_method" value="DELETE">
                 <button class="btn btn-danger btn-block btn-sm" type="submit">
                       Cancelar
                 </button>
             </form>
-            -->
              {{!-- </a> --}}
              </th>
     </tr>

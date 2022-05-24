@@ -76,7 +76,7 @@ router.put('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
     const { name, surname, dni, address, email }= req.body;
     const us = await User.findByIdAndUpdate(req.params.id, {name, surname, dni, address, email });
     //console.log({name});
-    req.flash('succes_msg', 'Datos actualizados correctamente');
+    req.flash('success_msg', 'Datos actualizados correctamente');
     res.redirect('/users/miperfil');
 })
 //hasta acá

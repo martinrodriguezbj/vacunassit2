@@ -26,7 +26,7 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
         const vaccName = await Turno.findOne( {vaccineName : vaccineName, user : req.user.id});
         const vaccAplied= await Vaccine.findOne({name : vaccineName, user : req.user.id})
         if(vaccName){
-            req.flash('error', 'Ya tiene un turno pendiente para esta vacuna');
+            req.flash('error', 'Usted ya tiene un turno para esta vacuna');
             res.redirect('/turns/misturnos'); 
         }else{
             if(vaccAplied){
@@ -54,7 +54,6 @@ router.get('/turns/turnosPasados', isAuthenticated, async (req, res) => {
     res.render('turns/misturnospasados', { turnos });
 });
 
-//hay que hacer ajustes, no me da el nombre, sòlo el id del objeto
 router.get('/turns/turnosVigentes', isAuthenticated, async (req, res) => {
     const turnos = await Turno.find({user: req.user.id, attended : false}).lean().sort('desc');
     console.log(turnos); 

@@ -18,9 +18,6 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
     if (!name){
         errors.push({text: 'Debe elegir una vacuna'});
     
-    // if(errors.length > 0){
-    //     res.render('vaccines/all-vaccines', {errors, name, dosis});
-    //
     } else {
         console.log(req.user.id);
         const vaccineName = await Vaccine.findOne( { name: name, user: req.user.id}); 

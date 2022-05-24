@@ -54,7 +54,7 @@ router.post('/users/signup', async  (req, res) => {
     }
 });
 
-router.get('/users/logout', (req, res) => {
+router.get('/users/logout', isAuthenticated, (req, res) => {
     req.logout();
     res.redirect('/')
 });
@@ -75,17 +75,10 @@ router.get('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
 router.put('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
     const { name, surname, dni, address, email }= req.body;
     const us = await User.findByIdAndUpdate(req.params.id, {name, surname, dni, address, email });
-    //console.log({name});
     req.flash('success_msg', 'Datos actualizados correctamente');
     res.redirect('/users/miperfil');
 });
-//hasta acá
 
-//comprobante
-
-router.get('/users/signup', (req, res) => {
-    res.render('users/signup')
-});
 
 //Recuperar contraseña 
 router.get('/users/pass-recovery', (req,res) => {
@@ -105,35 +98,29 @@ router.post('/users/password-recovery', async (req,res) => {
     }
 });  
 
-//Cambiar contraseña - NO ANDA - QUEDA PARA LA PRÓXIMA 
+//Cambiar contraseña
 router.get('/users/edit-pass', isAuthenticated, async (req, res) => {
     const user = await User.find({dni: req.user.dni}).lean();
-    //console.log(user); 
     const usuari = await User.findById(req.params.id).lean();
-    //console.log(usuari['0'].id);
     res.render('./users/edit-pass', {usuari});
-
 });
 
 router.put('/users/edit-pass/:id', isAuthenticated, async (req, res) => {
     const { contra }= req.body;
-    //actualiza contra
     await User.findByIdAndUpdate(req.params.id, {contra});
-    console.log(req.params.id+' es el ide')
-    //actualiza password
     const u = await User.findById(req.params.id);
-    //console.log(u);
 
-    const password = await u.encryptPassword(contra);
-    await User.findByIdAndUpdate(req.params.id, {password});
-    await newUser.save();
-    //informa y redirecciona
-    req.flash('success_msg', 'Contraseña actualizada');
-    res.redirect('/users/miperfil');
+    if(contra.length < 6){
+        req.flash('error_msg', 'debe ingresar, mínimo, 6 caracteres');
+        res.render('./users/edit-pass',{u}); 
+    }
+    else {
+        const password = await u.encryptPassword(contra);
+        await User.findByIdAndUpdate(req.params.id, {password});
+        req.flash('success_msg', 'Contraseña actualizada');
+        res.redirect('/users/miperfil');
+    }
 }); 
-
-
-
 
 
 //validar identidad ---- no funciona
@@ -142,11 +129,9 @@ router.get('/users/valid-id',isAuthenticated, async (req, res) => {
     //console.log(usuarios);
     const message = 'Identidad de '+usuari['0'].name+' '+usuari['0'].surname+' validada.'
     req.flash('error', message);    
-    req.flash('success_msg', message);
-// });    
-     res.render('users/valid-id',{usuari});
+    req.flash('success_msg', message); 
+    res.render('users/valid-id',{usuari});
  });
-
 
 router.get('users/valid-id/:id', isAuthenticated, async  (req, res) => { 
     const usuari = await User.findById(req.params.id).lean();

@@ -4,14 +4,19 @@
   <thead>
     <tr>
       <th scope="col">Vacuna</th>
-      <th scope="col">Fecha solicitado</th>
+      {{!-- <th scope="col">Fecha solicitud</th> --}}
+      <th scope="col">Fecha Asignada</th>
+      <th scope="col">Atendido</th>
+
     </tr>
   </thead>
   <tbody>
     {{#each turnos}}
     <tr>
             <th>{{vaccineName}}</th>
-            <th>{{date}}</th>
+            {{!-- <th>{{date}}</th> --}}
+            <th>{{orderDate}}</th>
+            <th>{{attended}}</th>
             <th>
              {{!-- <a href="/users/miperfil/edit/{{_id}}"> --}}
              {{!-- <button class="btn btn btn-primary block" type="submit">Cancelar</button> --}}

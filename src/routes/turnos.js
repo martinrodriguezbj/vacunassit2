@@ -11,7 +11,7 @@ const { ADMINISTRADOR } = require('../helpers/Roles');
 
 
 //soliictar turno
-router.get('/turns/solicitar', (req, res) => {
+router.get('/turns/solicitar', isAuthenticated, (req, res) => {
     res.render('turns/solicitar')
 });
 
@@ -27,27 +27,41 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
         const vaccAplied= await Vaccine.findOne({name : vaccineName, user : req.user.id})
         //console.log('nombre:',vaccName); 
         if(vaccName){
-            req.flash('error_msg', 'Ya tiene un turno pendiente para esta vacuna');
+            req.flash('error', 'Ya tiene un turno pendiente para esta vacuna');
             res.redirect('/turns/misturnos'); 
         }else{
             if(vaccAplied){
-                req.flash('error_msg', 'Ya tiene aplicada esta vacuna, no puede solicitar un turno');
+                req.flash('error', 'Ya tiene aplicada esta vacuna, no puede solicitar un turno');
                 res.redirect('/turns/misturnos'); 
             }else{
                 const newTurno = new Turno();
                 newTurno.vaccineName=vaccineName;
                 newTurno.user = req.user.id;
                 newTurno.appointed = false;
-                newTurno.attended = false;
-                newTurno.orderDate=null;
+                newTurno.attended = true;
+                newTurno.orderDate= new Date('2022-12-12');
                 console.log(newTurno);
                 await newTurno.save();
-                req.flash('succes_msg', 'turno agregado correctamente');
+                req.flash('success_msg', 'turno agregado correctamente');
                 res.redirect('/turns/misturnos');
             }
         }
     }
 });
+
+router.get('/turns/turnosPasados', isAuthenticated, async (req, res) => {
+    const turnos = await Turno.find({user: req.user.id}, [{orderDate : {$lt : Date.now}}]).lean().sort('desc');
+    console.log(turnos); 
+    res.render('turns/misturnos', { turnos });
+});
+
+//hay que hacer ajustes, no me da el nombre, sòlo el id del objeto
+router.get('/turns/turnosVigentes', isAuthenticated, async (req, res) => {
+    const turnos = await Turno.find({user: req.user.id}, {attended : false}).lean().sort('desc');
+    console.log(turnos); 
+    res.render('turns/misturnos', { turnos});
+});
+
 
 router.get('/turns/misturnos', isAuthenticated, async (req, res) => {
     const turnos = await Turno.find({user: req.user.id}).lean().sort({date: 'desc'});
@@ -56,7 +70,7 @@ router.get('/turns/misturnos', isAuthenticated, async (req, res) => {
 
 router.delete('/turns/delete/:id', isAuthenticated, async (req, res) => {
     await Turno.findByIdAndDelete(req.params.id);
-    req.flash('succes_msg', 'Turno eliminado correctamente');
+    req.flash('success_msg', 'Turno eliminado correctamente');
     res.redirect('/turns/misturnos');
 });
 

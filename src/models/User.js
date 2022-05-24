@@ -11,7 +11,9 @@ const UserSchema = new Schema({
     role: {type: String, enum: USER_ROLES},
     date: { type: Date, default: Date.now},
     dni: {type: String, required: true},
-    address: {type: String, required: false}
+    address: {type: String, required: false}, 
+    secretWord: {type: String, required:true}, 
+    contra: {type: String, required: false} //hay que eliminiarla 
    
 })
 

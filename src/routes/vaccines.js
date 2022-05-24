@@ -27,7 +27,7 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
         //    const vaccineDose = await Vaccine.findOne({dosis:dosis});
         if (vaccineName){// && vaccineDose){
             console.log('vacuna ya registrada');
-            req.flash('error_msg', 'La vacuna ya se encuentra registrada');
+            req.flash('error', 'La vacuna ya se encuentra registrada');
             res.redirect('/vaccines'); 
         }else {
             const newVaccine = new Vaccine({name});
@@ -36,19 +36,14 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
             newVaccine.lot = null; 
             newVaccine.date = null; 
             await newVaccine.save();
-            req.flash('succes_msg', 'Se ha registrado una nueva vacuna.');
+            req.flash('success_msg', 'Se ha registrado una nueva vacuna.');
             res.redirect('/vaccines'); 
         }
 
     }
 });
 
-
 router.get('/vaccines', isAuthenticated, async (req, res) => {
-    // Si el usuario es administrador, muestra todas las vacunas
-
-    //console.log(req.user);
-    //console.log(req.user.id);
     const user = await User.findById(req.user.id).lean();
     if (user.role === ADMINISTRADOR) {
         const vaccines = await Vaccine.find({}).lean().sort({date: 'desc'});
@@ -58,7 +53,7 @@ router.get('/vaccines', isAuthenticated, async (req, res) => {
     res.render('vaccines/all-vaccines', { vaccines });
 });
 
-router.get('/users/miperfil', async (req, res) => {
+router.get('/users/miperfil', isAuthenticated, async (req, res) => {
     const usuarios = await User.find({email: req.user.email}).lean();
     res.render('users/miperfil', {usuarios});
 });
@@ -72,7 +67,7 @@ router.get('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
 router.put('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
     const { name, email }= req.body;
     const us = await User.findByIdAndUpdate(req.params.id, {name, email });
-    req.flash('succes_msg', 'Datos actualizados correctamente');
+    req.flash('success_msg', 'Datos actualizados correctamente');
     res.redirect('/users/miperfil');
 }); 
 
@@ -85,13 +80,13 @@ router.get('/vaccines/edit/:id', isAuthenticated, async (req, res) => {
 router.put('/vaccines/edit-vaccine/:id', isAuthenticated, async (req, res) => {
     const { name }= req.body;
     await Vaccine.findByIdAndUpdate(req.params.id, {name});
-    req.flash('succes_msg', 'Vacuna actualizada correctamente');
+    req.flash('success_msg', 'Vacuna actualizada correctamente');
     res.redirect('../');
 }); 
 
 router.delete('/vaccines/delete/:id', isAuthenticated, async (req, res) => {
     await Vaccine.findByIdAndDelete(req.params.id);
-    req.flash('succes_msg', 'Vacuna eliminada correctamente');
+    req.flash('success_msg', 'Vacuna eliminada correctamente');
     res.redirect('../');
 });
 

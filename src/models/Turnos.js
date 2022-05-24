@@ -8,7 +8,7 @@ const TurnosSchema = new Schema({
     user: {type: String},
     appointed: {type: Boolean},
     attended: {type: Boolean},
-    orderDate: {type: Date, required: false}
+    orderDate: {type: Date}
 })
 
 module.exports = mongoose.model('Turnos', TurnosSchema)

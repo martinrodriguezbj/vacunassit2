@@ -6,18 +6,18 @@ const User = require('../models/User');
 passport.use(new LocalStrategy({
     usernameField: 'dni'
 }, async (dni, password, done) => {
-  const user = await User.findOne({dni: dni});
-  if (!user){
-      return done(null, false, { message: 'Usuario no encontrado.'});   
-  } else {
-      const match = await user.matchPassword(password);
-      if (match){
-          
-          return done(null, user);
-      } else {
-          return done(null, false, {message: 'Contraseña incorrecta'});
-      }
-  }
+    const user = await User.findOne({ dni: dni });
+    if (!user) {
+        return done(null, false, { message: 'Usuario no encontrado.' });
+    } else {
+        const match = await user.matchPassword(password);
+        if (match) {
+
+            return done(null, user);
+        } else {
+            return done(null, false, { message: 'Contraseña incorrecta' });
+        }
+    }
 }));
 
 passport.serializeUser((user, done) => {

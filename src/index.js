@@ -14,7 +14,7 @@ const passport = require('passport');
  require('./config/passport');
 
  // Setting - acá van todas nuestras configuraciones
-app.set('port', process.env.port || 3000);
+app.set('port', process.env.port || 5000);
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', exphbs.engine({
     defaultLayout: 'main',

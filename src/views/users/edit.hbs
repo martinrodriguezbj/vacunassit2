@@ -8,11 +8,11 @@
         <input type="hidden" name="_method" value="PUT">
         <div class="form-group">
           <p>NOMBRE</p>
-          <input type="text" name="name" class="form-control" value="{{usuari.name}}"/>
+          <input type="text" name="name" class="form-control" value="{{usuari.name}}" />
         </div>
         <div class="form-group">
           <p>APELLIDO</p>
-          <textarea name="surname" class="form-control" >{{usuari.surname}}</textarea>
+          <textarea name="surname" class="form-control">{{usuari.surname}}</textarea>
         </div>
         <div class="form-group">
           {{!-- <p>DNI</p>
@@ -20,13 +20,27 @@
         </div> --}}
         <div class="form-group">
           <p>EMAIL</p>
-          <textarea name="email" class="form-control">{{usuari.email}}</textarea>
+          <textarea type="email" name="email" class="form-control">{{usuari.email}}</textarea>
         </div>
         <div class="form-group">
           <p>DIRECCIÓN</p>
           <textarea name="address" class="form-control">{{usuari.address}}</textarea>
         </div>
-
+        <div class="form-group">
+          <p>EDAD</p>
+          <input type="number" min="0" max="100" name="edad" class="form-control" value="{{usuari.edad}}"></input>
+        </div>
+        <div class="form group">
+          <p>¿ES FACTOR DE RIESGO?</p>
+          <select name="riesgo" class="form-control">{{usuari.riesgo}}
+            <option>Si</option>
+            <option>No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <p>DNI</p>
+          <textarea type="number" min="0" max="99999999" name="dni" class="form-control">{{usuari.dni}}</textarea>
+        </div>
         <div class="form-group">
           <button class="btn btn-primary btn-block" type="submit">
             Guardar

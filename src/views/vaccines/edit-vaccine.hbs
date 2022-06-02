@@ -1,17 +1,14 @@
 <div class="col-md-4 mx-auto">
   <div class="card">
     <div class="card-header">
-      <h3>Editar vacunas</h3>
+      <h3>Fecha de colocación</h3>
     </div>
     <div class="card-body">
       <form action="/vaccines/edit-vaccine/{{vaccine._id}}?_method=PUT" method="POST">
         <input type="hidden" name="_method" value="PUT">
         <div class="form-group">
-          <input type="text" name="name" class="form-control" value="{{vaccine.name}}"/>
+          <input type="date" name="date" class="form-control" value="{{vaccine.date}}" />
         </div>
-        {{!-- <div class="form-group">
-          <textarea name="dosis" class="form-control">{{vaccine.dosis}}</textarea>
-        </div> --}}
         <div class="form-group">
           <button class="btn btn-primary btn-block" type="submit">
             Guardar

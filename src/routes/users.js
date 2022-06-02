@@ -1,12 +1,13 @@
 const express = require('express');
+const fileUpload = require("express-fileupload");
+const path = require("path");
 const router = express.Router();
-
 const { isAuthenticated } = require('../helpers/auth');
 const User = require('../models/User');
+const Vaccine = require('../models/Vaccine');
 
 const passport = require('passport');
 const { PACIENTE } = require('../helpers/Roles');
-const { compare } = require('bcryptjs');
 
 router.get('/users/signin', (req, res) => {
     res.render('users/signin')
@@ -116,7 +117,7 @@ router.get('/users/edit-pass', isAuthenticated, async (req, res) => {
 
 router.put('/users/edit-pass/:id', isAuthenticated, async (req, res) => {
     const { contra, repetirContra } = req.body;
-    console.log('contra: '+contra+' RepContra: '+ repetirContra)
+    console.log('contra: ' + contra + ' RepContra: ' + repetirContra)
     const u = await User.findById(req.params.id);
 
     if (contra.length < 6) {
@@ -124,14 +125,14 @@ router.put('/users/edit-pass/:id', isAuthenticated, async (req, res) => {
         res.redirect('/users/miperfil');
     }
     else {
-        if( contra !== repetirContra){
+        if (contra !== repetirContra) {
             req.flash('error_msg', 'Las contraseñas no coinciden');
             res.redirect('/users/miperfil');
-        }else{
+        } else {
             await User.findByIdAndUpdate(req.params.id, { contra });
             const password = await u.encryptPassword(contra);
             await User.findByIdAndUpdate(req.params.id, { password });
-             
+
             req.flash('success_msg', 'Contraseña actualizada');
             res.redirect('/users/miperfil');
         }
@@ -141,39 +142,63 @@ router.put('/users/edit-pass/:id', isAuthenticated, async (req, res) => {
 //pedir la contraseña actual antes de actualizar
 router.put('/users/preEdit-pass/:id', isAuthenticated, async (req, res) => {
     const { contra } = req.body;
-    const u = await User.findById(req.params.id); 
+    const u = await User.findById(req.params.id);
 
-    if (contra === u.contra){
+    if (contra === u.contra) {
         //redirigir a la ruta para actualizar la contraseña
         res.render('./users/edit-pass', { u });
     }
-    else{
+    else {
         //error y redirigir al perfil 
         req.flash('error', 'Contraseña inválida');
         res.redirect('/users/miperfil');
     }
 });
 
-
 //validar identidad ---- no funciona
 router.get('/users/valid-id', isAuthenticated, async (req, res) => {
     const usuari = await User.find({ dni: req.user.dni }).lean();
-    //console.log(usuarios);
-    const message = 'Identidad de ' + usuari['0'].name + ' ' + usuari['0'].surname + ' validada.'
+    //console.log(req.file);
+
+    //const message = 'Identidad de ' + usuari['0'].name + ' ' + usuari['0'].surname + ' validada.'
     //req.flash('error', message);
-    req.flash('success_msg', message);
-    // res.render('users/valid-id', { usuari });
-    res.redirect('/users/miperfil'); 
+    //req.flash('success_msg', message);
+    res.render('users/valid-id', { usuari });
+    //res.redirect('/users/miperfil'); 
 });
 
-// router.get('users/valid-id/:id', isAuthenticated, async (req, res) => {
-//     const usuari = await User.findById(req.params.id);
-//     console.log('Usuario del 2do metodo: ' + usuari);
-//     const message = 'Identidad de ' + usuari['0'].name + ' ' + usuari['0'].surname + ' validada.'
-//     //req.flash('error', message);
-//     req.flash('success_msg', 'Identidad de ' + usuari['0'].name + ' ' + usuari['0'].surname + ' validada.');
-//     // window.alert(message);
-//     // res.render('users/edit', { usuari });
-//     res.redirect('/users/miperfil'); 
-// })
+router.post('/users/validated', isAuthenticated, async (req, res) => {
+    const usuario = req.user//await User.findById(req.params.id);
+    console.log(usuario);
+    console.log(req.files);
+    if (!req.files) {
+        return res.status(400).send("No files were uploaded.");
+    }
+
+    const file = req.files.fname;
+    const path = "src/files" + file.name;
+
+    file.mv(path, (err) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        return res.send({ status: "success", path: path });
+    });
+    //res.json(req.file);
+    //     const message = 'Identidad de ' + usuari['0'].name + ' ' + usuari['0'].surname + ' validada.'
+    //     //req.flash('error', message);
+    req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
+    //     // window.alert(message);
+    //     // res.render('users/edit', { usuari });
+    res.redirect('/users/miperfil');
+});
+
+//certificado de vacunación
+router.get('/users/micertificado', isAuthenticated, async (req, res) => {
+    const usuario = await User.find({ dni: req.user.dni }).lean();
+    const vacunas = await Vaccine.find({ user: req.user.id }).lean(); //quiero buscar las vacunas del usuario
+    console.log(vacunas);
+    res.render('users/micertificado', { usuario, vacunas });
+});
+
 module.exports = router;

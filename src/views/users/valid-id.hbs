@@ -5,15 +5,14 @@
         Validar Identidad
       </div>
       <div class="card-body">
-        <form action="/users/miperfil" method="GET">
-         {{!-- <input type="hidden" name="_method" value="PUT"> --}}
+        <form action="/users/validated" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="_method" value="PUT">
           <div class="form-group">
-            <input type="file" name="name" >
-          </div>    
-          <button class="btn btn-primary btn-block">
+            <input type="file" name="fname" id="imgId" ></input>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">
             Validar identidad
           </button>
-        </form>
       </div>
     </div>
   </div>

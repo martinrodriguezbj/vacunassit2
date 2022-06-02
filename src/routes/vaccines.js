@@ -12,8 +12,8 @@ router.get('/vaccines/add', isAuthenticated, (req, res) => {
 });
 
 router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
-    const { name } = req.body;
-    console.log(name);
+    const { name, date } = req.body;
+    console.log(name, date);
     const errors = [];
     if (!name){
         errors.push({text: 'Debe elegir una vacuna'});
@@ -21,17 +21,16 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
     } else {
         console.log(req.user.id);
         const vaccineName = await Vaccine.findOne( { name: name, user: req.user.id}); 
-        //    const vaccineDose = await Vaccine.findOne({dosis:dosis});
-        if (vaccineName){// && vaccineDose){
+        if (vaccineName){
             console.log('vacuna ya registrada');
             req.flash('error', 'La vacuna ya se encuentra registrada');
             res.redirect('/vaccines'); 
         }else {
-            const newVaccine = new Vaccine({name});
+            const newVaccine = new Vaccine({name, date});
             newVaccine.user = req.user.id;
             newVaccine.place = null; 
             newVaccine.lot = null; 
-            newVaccine.date = null; 
+            newVaccine.labName = null;
             await newVaccine.save();
             req.flash('success_msg', 'Se ha registrado una nueva vacuna.');
             res.redirect('/vaccines'); 
@@ -75,8 +74,8 @@ router.get('/vaccines/edit/:id', isAuthenticated, async (req, res) => {
 }); 
 
 router.put('/vaccines/edit-vaccine/:id', isAuthenticated, async (req, res) => {
-    const { name }= req.body;
-    await Vaccine.findByIdAndUpdate(req.params.id, {name});
+    const { date }= req.body;
+    await Vaccine.findByIdAndUpdate(req.params.id, {date});
     req.flash('success_msg', 'Vacuna actualizada correctamente');
     res.redirect('../');
 }); 

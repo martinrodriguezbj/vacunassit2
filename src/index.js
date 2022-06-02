@@ -1,6 +1,7 @@
 //este archivo es para arrancar nuestro servidor
 
 const express = require('express'); 
+const fileUpload = require("express-fileupload");
 const path = require('path');
 const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
@@ -65,3 +66,18 @@ app.use(express.static(path.join(__dirname, 'public')));
  app.listen(app.get('port'), () => {
      console.log('Server on port', app.get('port'));
  });
+
+ //Manejo de archivos para la validación de identidad. 
+ app.use(
+    fileUpload()
+  );
+  app.get("/valid-id", (req, res) => {
+    res.sendFile(path.join(__dirname, "valid-id"));
+  });
+  
+  app.use(
+    fileUpload({
+      createParentPath: true,
+    })
+  );
+  

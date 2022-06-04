@@ -61,16 +61,13 @@ router.get('/users/logout', isAuthenticated, (req, res) => {
     res.redirect('/')
 });
 
-//editado por mi
 router.get('/users/miperfil', isAuthenticated, async (req, res) => {
     const usuarios = await User.find({ dni: req.user.dni }).lean();
-    //console.log(usuarios);
     res.render('users/miperfil', { usuarios });
 });
 
 router.get('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
     const usuari = await User.findById(req.params.id).lean();
-    // console.log(req.params.id);
     res.render('users/edit', { usuari });
 })
 
@@ -109,7 +106,6 @@ router.post('/users/password-recovery', async (req, res) => {
 });
 
 //Cambiar contraseña
-
 router.get('/users/edit-pass', isAuthenticated, async (req, res) => {
     const usuari = await User.findById(req.params.id).lean();
     res.render('./users/preEdit-pass', { usuari });
@@ -145,11 +141,9 @@ router.put('/users/preEdit-pass/:id', isAuthenticated, async (req, res) => {
     const u = await User.findById(req.params.id);
 
     if (contra === u.contra) {
-        //redirigir a la ruta para actualizar la contraseña
         res.render('./users/edit-pass', { u });
     }
     else {
-        //error y redirigir al perfil 
         req.flash('error', 'Contraseña inválida');
         res.redirect('/users/miperfil');
     }
@@ -196,8 +190,10 @@ router.post('/users/validated', isAuthenticated, async (req, res) => {
 //certificado de vacunación
 router.get('/users/micertificado', isAuthenticated, async (req, res) => {
     const usuario = await User.find({ dni: req.user.dni }).lean();
-    const vacunas = await Vaccine.find({ user: req.user.id }).lean(); //quiero buscar las vacunas del usuario
-    console.log(vacunas);
+    const vacunas = await Vaccine.find({ user: req.user.id }).lean(); 
+    //comparar el nombre de la vacuna con null para saber si fue o no colocado en el vacunatorio
+    //no sè còmo traer el nombre de la vacuna, me tira indefinido
+
     res.render('users/micertificado', { usuario, vacunas });
 });
 

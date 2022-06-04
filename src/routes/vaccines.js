@@ -7,8 +7,9 @@ const { isAuthenticated } = require('../helpers/auth');
 const User = require('../models/User');
 const { ADMINISTRADOR } = require('../helpers/Roles');
 
-router.get('/vaccines/add', isAuthenticated, (req, res) => {
-    res.render('vaccines/new-vaccines');
+router.get('/vaccines/add', isAuthenticated, async (req, res) => {
+    const user = await User.findById(req.user.id).lean();
+    res.render('vaccines/new-vaccines', {isAdmin: user.role === ADMINISTRADOR});
 });
 
 router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {

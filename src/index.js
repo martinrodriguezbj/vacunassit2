@@ -40,6 +40,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session()); 
 app.use(flash());
+app.use(
+  fileUpload({
+    createParentPath: true,
+  })
+);
 
  // Global variables - nos sirve para colocar ciertos datos que queremos que toda nuestra aplicacion tenga accesible
 app.use((req, res, next) => {
@@ -57,6 +62,11 @@ app.use((req, res, next) => {
  app.use(require('./routes/users'))
  app.use(require('./routes/vaccines'))
  app.use(require('./routes/turnos'))
+ 
+  //Manejo de archivos para la validación de identidad. 
+  app.get("/valid-id", (req, res) => {
+    res.sendFile(path.join(__dirname, "valid-id"));
+  });
 
  // Static files - para configurar donde estara la carpeta de archivos estaticos
 
@@ -67,17 +77,7 @@ app.use(express.static(path.join(__dirname, 'public')));
      console.log('Server on port', app.get('port'));
  });
 
- //Manejo de archivos para la validación de identidad. 
- app.use(
-    fileUpload()
-  );
-  app.get("/valid-id", (req, res) => {
-    res.sendFile(path.join(__dirname, "valid-id"));
-  });
+
   
-  app.use(
-    fileUpload({
-      createParentPath: true,
-    })
-  );
+
   

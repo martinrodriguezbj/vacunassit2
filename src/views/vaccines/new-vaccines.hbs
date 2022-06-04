@@ -22,6 +22,9 @@
                 <div class="form-group">
                     <input type="date" name="date" />
                 </div>
+                {{#if isAdmin}}
+                    <input type="text" name="user" placeholder="Escriba el DNI del usuario" />
+                {{/if}}
                 <div class="form group">
                     <button class="btn btn btn-primary block" type="submit">Cargar vacuna</button>
                 </div>

@@ -164,35 +164,25 @@ router.get('/users/valid-id', isAuthenticated, async (req, res) => {
 router.post('/users/validated', isAuthenticated, async (req, res) => {
     const usuario = req.user//await User.findById(req.params.id);
     console.log(usuario);
-    console.log(req.files);
-    if (!req.files) {
-        return res.status(400).send("No files were uploaded.");
-    }
-
+    console.log({files: req.files});
     const file = req.files.fname;
-    const path = "src/files" + file.name;
 
-    file.mv(path, (err) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        return res.send({ status: "success", path: path });
-    });
-    //res.json(req.file);
-    //     const message = 'Identidad de ' + usuari['0'].name + ' ' + usuari['0'].surname + ' validada.'
-    //     //req.flash('error', message);
+    if (!file) {
+        return res.status(400).send("No files were uploaded.");
+    };
+
     req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
-    //     // window.alert(message);
-    //     // res.render('users/edit', { usuari });
+
     res.redirect('/users/miperfil');
 });
 
 //certificado de vacunación
 router.get('/users/micertificado', isAuthenticated, async (req, res) => {
     const usuario = await User.find({ dni: req.user.dni }).lean();
-    const vacunas = await Vaccine.find({ user: req.user.id }).lean(); 
-    //comparar el nombre de la vacuna con null para saber si fue o no colocado en el vacunatorio
-    //no sè còmo traer el nombre de la vacuna, me tira indefinido
+    let vacunas = await Vaccine.find({ user: req.user.id }).lean();
+    
+    // filtramos por las vacunas que tengan un laboratorio asociado
+    vacunas = vacunas.filter(vacuna => vacuna.labName !== null);
 
     res.render('users/micertificado', { usuario, vacunas });
 });

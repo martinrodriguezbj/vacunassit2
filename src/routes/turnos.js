@@ -17,7 +17,6 @@ router.get('/turns/solicitar', isAuthenticated, (req, res) => {
 
 router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
     const { vaccineName }= req.body ;
-    console.log('nombre turno:',vaccineName);
     const errors = [];
     if(!vaccineName){
         errors.push({text: 'Por favor seleccione una vacuna'});
@@ -39,7 +38,7 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                 newTurno.appointed = false;
                 newTurno.attended = false;
                 newTurno.orderDate= null;
-                console.log(newTurno);
+                // console.log(newTurno);
                 await newTurno.save();
                 req.flash('success_msg', 'turno agregado correctamente');
                 res.redirect('/turns/misturnos');
@@ -50,13 +49,13 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
 
 router.get('/turns/turnosPasados', isAuthenticated, async (req, res) => {
     const turnos = await Turno.find({user: req.user.id, attended: true} /*, [{orderDate : {$lt : Date.now}}]*/).lean().sort('desc');
-    console.log(turnos); 
+    // console.log(turnos); 
     res.render('turns/misturnospasados', { turnos });
 });
 
 router.get('/turns/turnosVigentes', isAuthenticated, async (req, res) => {
     const turnos = await Turno.find({user: req.user.id, attended : false}).lean().sort('desc');
-    console.log(turnos); 
+    // console.log(turnos); 
     res.render('turns/misturnosvigentes', { turnos});
 });
 
@@ -69,6 +68,19 @@ router.delete('/turns/delete/:id', isAuthenticated, async (req, res) => {
     await Turno.findByIdAndDelete(req.params.id);
     req.flash('success_msg', 'Turno eliminado correctamente');
     res.redirect('/turns/misturnos');
+});
+
+//cancelar turno
+router.delete('/turns/cancel/:id', isAuthenticated, async (req, res) => {
+    const {orderDate} = await Turno.findById(req.params.id);
+    if (orderDate > Date.now()){
+        await Turno.findByIdAndDelete(req.params.id);
+        req.flash('success_msg', 'Turno cancelado correctamente');
+        res.redirect('/turns/misturnos');
+    }else{
+        req.flash('error', 'Los turnos deben cancelarse con 24hs de anticipación.');
+        res.redirect('/turns/misturnos');
+    }
 });
 
 module.exports = router;

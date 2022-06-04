@@ -1,4 +1,6 @@
-<h2><center>Mis turnos vigentes</center></h2>
+<h2>
+  <center>Mis turnos vigentes</center>
+</h2>
 {{#if turnos}}
 <table class="table table-dark">
   <thead>
@@ -10,22 +12,25 @@
   <tbody>
     {{#each turnos}}
     <tr>
-            <th>{{vaccineName}}</th>
-            <th>
-             {{!-- <a href="/users/miperfil/edit/{{_id}}"> --}}
-             {{!-- <button class="btn btn btn-primary block" type="submit">Cancelar</button> --}}
-             <form action="/turns/delete/{{_id}}?_method=DELETE" method="POST">
-                <input type="hidden" name="_method" value="DELETE">
-                <button class="btn btn-danger btn-block btn-sm" type="submit">
-                      Cancelar
-                </button>
-            </form>
-             {{!-- </a> --}}
-             </th>
+      <th>{{vaccineName}}</th>
+      <th>
+        {{!-- <a href="/users/miperfil/edit/{{_id}}"> --}}
+          {{!-- <button class="btn btn btn-primary block" type="submit">Cancelar</button> --}}
+          <form action="/turns/cancel/{{_id}}?_method=DELETE" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            <button class="btn btn-danger btn-block btn-sm" type="submit">
+              Cancelar
+            </button>
+          </form>
+          {{!--
+        </a> --}}
+      </th>
     </tr>
     {{/each}}
     {{else}}
-    <center><h1>No hay turnos para mostrar</h1></center>
+    <center>
+      <h1>No hay turnos para mostrar</h1>
+    </center>
     {{/if}}
   </tbody>
 </table>

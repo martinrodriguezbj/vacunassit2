@@ -5,7 +5,7 @@ const TurnosSchema = new Schema({
     sede: { type: String, required: false},
     vaccineName: { type: String, required: true},
     date: { type: Date, default: Date.now}, 
-    user: {type: String},
+    user: {type: mongoose.Types.ObjectId},
     appointed: {type: Boolean},
     attended: {type: Boolean},
     orderDate: {type: Date}

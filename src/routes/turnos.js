@@ -8,6 +8,7 @@ const User = require('../models/User');
 const Turno = require('../models/Turnos');
 
 const { ADMINISTRADOR } = require('../helpers/Roles');
+const Turnos = require('../models/Turnos');
 
 
 //soliictar turno
@@ -81,6 +82,28 @@ router.delete('/turns/cancel/:id', isAuthenticated, async (req, res) => {
         req.flash('error', 'Los turnos deben cancelarse con 24hs de anticipación.');
         res.redirect('/turns/misturnos');
     }
+});
+
+//turnos hoy - vacunador
+
+router.get('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
+    //const turnos = await Turno.find().lean().sort({date: 'desc'});
+    //const users = await User.find({_id: req.user});
+    const resultado = await Turno.aggregate([
+        {
+            $lookup: {
+                from:'users',
+                localField:'user',
+                foreignField:'_id',
+                as:'turnoUsuario'
+            }
+        },
+        { $unwind: "$turnoUsuario"}
+    ])
+   // console.log(turnos);
+  //  console.log(users);
+    console.log(resultado);
+    res.render('turns/turnoshoy', {resultado});
 });
 
 module.exports = router;

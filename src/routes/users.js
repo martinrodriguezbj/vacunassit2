@@ -170,8 +170,12 @@ router.post('/users/validated', isAuthenticated, async (req, res) => {
     if (!file) {
         return res.status(400).send("No files were uploaded.");
     };
-
-    req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
+    if (file.name == 'valida.jpg'){
+        req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
+    }else{
+        req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Intente nuevamente.');
+    }
+    
 
     res.redirect('/users/miperfil');
 });

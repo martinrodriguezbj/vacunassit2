@@ -8,6 +8,7 @@ const Vaccine = require('../models/Vaccine');
 
 const passport = require('passport');
 const { PACIENTE } = require('../helpers/Roles');
+const { isNull } = require('util');
 
 router.get('/users/signin', (req, res) => {
     res.render('users/signin')
@@ -163,14 +164,20 @@ router.get('/users/valid-id', isAuthenticated, async (req, res) => {
 router.post('/users/validated', isAuthenticated, async (req, res) => {
     const usuario = req.user//await User.findById(req.params.id);
     console.log(usuario);
-    console.log({files: req.files});
-    const file = req.files.fname;
+    console.log({ files: req.files });
+    const files = req.files;
 
-    if (!file) {
-        return res.status(400).send("No files were uploaded.");
-    };
-
-    req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
+    if (files === null) {
+        //return res.status(400).send("No files were uploaded.");
+        req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Debe cargar una foto.');
+    } else {
+        const file = req.files.fname;
+        if (file.name == 'valida.jpg') {
+            req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
+        } else {
+            req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Intente nuevamente.');
+        }
+    }
 
     res.redirect('/users/miperfil');
 });
@@ -179,7 +186,7 @@ router.post('/users/validated', isAuthenticated, async (req, res) => {
 router.get('/users/micertificado', isAuthenticated, async (req, res) => {
     const usuario = await User.find({ dni: req.user.dni }).lean();
     let vacunas = await Vaccine.find({ user: req.user.id }).lean();
-    
+
     // filtramos por las vacunas que tengan un laboratorio asociado
     vacunas = vacunas.filter(vacuna => vacuna.labName !== null);
 

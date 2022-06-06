@@ -1,0 +1,40 @@
+<h1></h1>
+<h2>
+    <center>Paciente</center>
+</h2>
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Apellido</th>
+            <th scope="col">DNI</th>
+            <th scope="col">Edad</th>
+            <th scope="col">Factor de Riesgo</th>
+            <th scope="col">Dirección</th>
+            <th scope="col">Email</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each paciente}}
+        <tr>
+            <th>{{name}}</th>
+            <th>{{surname}}</th>
+            <th>{{dni}}</th>
+            <th>{{edad}}</th>
+            <th>{{riesgo}}</th>
+            <th>{{address}}</th>
+            <th>{{email}}</th>
+            <th>
+                <a href="/users/vacunador/agregar-vacuna/{{_id}}">
+                    <input type="button" value="Registrar Vacuna">
+                </a>
+                <h3></h3>
+                <a href="/users/vacunador/nuevo-turno/{{_id}}">
+                    <input type="button" value="Agregar a la lista de turnos">
+                </a>
+            </th>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

@@ -11,7 +11,7 @@ const { ADMINISTRADOR } = require('../helpers/Roles');
 const Turnos = require('../models/Turnos');
 
 
-//soliictar turno
+//solictar turno
 router.get('/turns/solicitar', isAuthenticated, (req, res) => {
     res.render('turns/solicitar')
 });
@@ -39,7 +39,6 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                 newTurno.appointed = false;
                 newTurno.attended = false;
                 newTurno.orderDate= null;
-                // console.log(newTurno);
                 await newTurno.save();
                 req.flash('success_msg', 'turno agregado correctamente');
                 res.redirect('/turns/misturnos');
@@ -49,14 +48,12 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
 });
 
 router.get('/turns/turnosPasados', isAuthenticated, async (req, res) => {
-    const turnos = await Turno.find({user: req.user.id, attended: true} /*, [{orderDate : {$lt : Date.now}}]*/).lean().sort('desc');
-    // console.log(turnos); 
+    const turnos = await Turno.find({user: req.user.id, attended: true}).lean().sort('desc');
     res.render('turns/misturnospasados', { turnos });
 });
 
 router.get('/turns/turnosVigentes', isAuthenticated, async (req, res) => {
     const turnos = await Turno.find({user: req.user.id, attended : false}).lean().sort('desc');
-    // console.log(turnos); 
     res.render('turns/misturnosvigentes', { turnos});
 });
 
@@ -87,9 +84,7 @@ router.delete('/turns/cancel/:id', isAuthenticated, async (req, res) => {
 //turnos hoy - vacunador
 
 router.get('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
-    //const turnos = await Turno.find().lean().sort({date: 'desc'});
-    //const users = await User.find({_id: req.user});
-    const resultado = await Turno.aggregate([
+    let resultado = await Turno.aggregate([
         {
             $lookup: {
                 from:'users',
@@ -99,10 +94,9 @@ router.get('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
             }
         },
         { $unwind: "$turnoUsuario"}
-    ])
-   // console.log(turnos);
-  //  console.log(users);
-    console.log(resultado);
+    ]); 
+    const fecha = new Date(Date.now()).setHours(0,0,0,0); 
+    resultado = resultado.filter(r => r.orderDate !== null).filter(r => r.orderDate.setHours(0,0,0,0) === fecha); 
     res.render('turns/turnoshoy', {resultado});
 });
 

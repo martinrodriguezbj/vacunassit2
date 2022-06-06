@@ -86,7 +86,6 @@ router.put('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-
 //Recuperar contraseña 
 router.get('/users/pass-recovery', (req, res) => {
     res.render('./users/password-recovery');
@@ -185,6 +184,30 @@ router.get('/users/micertificado', isAuthenticated, async (req, res) => {
     vacunas = vacunas.filter(vacuna => vacuna.labName !== null);
 
     res.render('users/micertificado', { usuario, vacunas });
+});
+
+//libreta sanitaria -> tiene todas las vacunas que registra en la app 
+router.get('/users/micertificado', isAuthenticated, async (req, res) => {
+    const usuario = await User.find({ dni: req.user.dni }).lean();
+    let vacunas = await Vaccine.find({ user: req.user.id }).lean();
+
+    res.render('users/micertificado', { usuario, vacunas });
+});
+
+//Buscar Paciente 
+router.get('/users/buscar-paciente', isAuthenticated,(req, res) => {
+    res.render('./users/buscarP');
+});
+
+router.post('/users/buscarP', isAuthenticated, async (req, res) => {
+    const paciente = await User.find(req.body);
+    if (Object.entries(paciente) == 0) {
+        req.flash('error_msg', 'El DNI no se encuentra registrado');
+        res.redirect('/users/buscar-paciente');
+    } else {
+        res.render('./users/vacunador/perfil-paciente', { paciente }); //la ruta para renderizar
+        console.log(paciente); 
+    }
 });
 
 module.exports = router;

@@ -17,7 +17,7 @@ router.get('/turns/solicitar', isAuthenticated, (req, res) => {
 });
 
 router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
-    const { vaccineName }= req.body ;
+    const { vaccineName, sede }= req.body ;
     const errors = [];
     if(!vaccineName){
         errors.push({text: 'Por favor seleccione una vacuna'});
@@ -39,7 +39,7 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                 newTurno.appointed = false;
                 newTurno.attended = false;
                 newTurno.orderDate= Date.now();
-                newTurno.sede="Sede 2";
+                newTurno.sede=sede; 
                 await newTurno.save();
                 req.flash('success_msg', 'turno agregado correctamente');
                 res.redirect('/turns/misturnos');

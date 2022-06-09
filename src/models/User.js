@@ -15,8 +15,8 @@ const UserSchema = new Schema({
     riesgo:{type:String,required:true},
     address: {type: String, required: false}, 
     secretWord: {type: String, required:true}, 
-    contra: {type: String, required: false} //hay que eliminiarla 
-   
+    contra: {type: String, required: false}, //hay que eliminiarla 
+    validado:{type:Boolean, required:false}
 })
 
 UserSchema.methods.encryptPassword = async (password) => {

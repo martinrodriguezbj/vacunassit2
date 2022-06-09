@@ -47,7 +47,7 @@ router.post('/users/signup', async (req, res) => {
             req.flash('error', 'El dni se encuentra en uso');
             res.redirect('/users/signup');
         } else {
-            const newUser = new User({ name, surname, email, password, dni, address, edad, riesgo, role: PACIENTE, secretWord });
+            const newUser = new User({ name, surname, email, password, dni, address, edad, riesgo, role: PACIENTE, secretWord, validado: false});
             newUser.contra = password;
             newUser.password = await newUser.encryptPassword(password);
             await newUser.save();
@@ -149,30 +149,24 @@ router.put('/users/preEdit-pass/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-//validar identidad ---- no funciona
+//validar identidad 
 router.get('/users/valid-id', isAuthenticated, async (req, res) => {
     const usuari = await User.find({ dni: req.user.dni }).lean();
-    //console.log(req.file);
-
-    //const message = 'Identidad de ' + usuari['0'].name + ' ' + usuari['0'].surname + ' validada.'
-    //req.flash('error', message);
-    //req.flash('success_msg', message);
     res.render('users/valid-id', { usuari });
-    //res.redirect('/users/miperfil'); 
 });
 
 router.post('/users/validated', isAuthenticated, async (req, res) => {
-    const usuario = req.user//await User.findById(req.params.id);
+    const usuario = req.user
     console.log(usuario);
     console.log({ files: req.files });
     const files = req.files;
 
     if (files === null) {
-        //return res.status(400).send("No files were uploaded.");
         req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Debe cargar una foto.');
     } else {
         const file = req.files.fname;
         if (file.name == 'valida.jpg') {
+            await User.findByIdAndUpdate(req.params.id, { validado : true });
             req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
         } else {
             req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Intente nuevamente.');
@@ -216,5 +210,11 @@ router.post('/users/buscarP', isAuthenticated, async (req, res) => {
         console.log(paciente); 
     }
 });
+
+//selector de sede
+router.get('/users/vacunador/selector-sede', isAuthenticated,(req, res) => {
+    res.render('./users/vacunador/selector-sede');
+});
+
 
 module.exports = router;

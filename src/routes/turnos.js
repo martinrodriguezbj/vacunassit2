@@ -38,7 +38,8 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                 newTurno.user = req.user.id;
                 newTurno.appointed = false;
                 newTurno.attended = false;
-                newTurno.orderDate= null;
+                newTurno.orderDate= Date.now();
+                newTurno.sede="Sede 2";
                 await newTurno.save();
                 req.flash('success_msg', 'turno agregado correctamente');
                 res.redirect('/turns/misturnos');
@@ -83,7 +84,9 @@ router.delete('/turns/cancel/:id', isAuthenticated, async (req, res) => {
 
 //turnos hoy - vacunador
 
-router.get('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
+router.post('/turns/turnoshoy', isAuthenticated, async (req, res) => {
+    const {sede} = req.body;
+    console.log(sede);
     let resultado = await Turno.aggregate([
         {
             $lookup: {
@@ -96,7 +99,7 @@ router.get('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
         { $unwind: "$turnoUsuario"}
     ]); 
     const fecha = new Date(Date.now()).setHours(0,0,0,0); 
-    resultado = resultado.filter(r => r.orderDate !== null).filter(r => r.orderDate.setHours(0,0,0,0) === fecha); 
+    resultado = resultado.filter(r => r.orderDate !== null).filter(r => r.orderDate.setHours(0,0,0,0) === fecha).filter(r => r.sede === sede); 
     res.render('turns/turnoshoy', {resultado});
 });
 

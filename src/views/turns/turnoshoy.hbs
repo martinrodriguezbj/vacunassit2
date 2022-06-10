@@ -1,4 +1,7 @@
-<h2><center>Turnos de hoy</center></h2>
+<h2>
+  <center>Turnos de hoy</center>
+
+</h2>
 {{#if resultado}}
 <table class="table table-dark">
   <thead>
@@ -6,37 +9,30 @@
       <th scope="col">Paciente</th>
       <th scope="col">DNI</th>
       <th scope="col">Vacuna</th>
-      {{!-- <th scope="col">Fecha solicitud</th> --}}
       <th scope="col">Fecha Asignada</th>
       <th scope="col">Atendido</th>
-
+      <th scope="col">Acciones</th>
     </tr>
   </thead>
   <tbody>
     {{#each resultado}}
     <tr>
-            <th>{{turnoUsuario.name}}</th>
-            <th>{{turnoUsuario.dni}}</th>
-            <th>{{vaccineName}}</th>
-            {{!-- <th>{{date}}</th> --}}
-            <th>{{orderDate}}</th>
-            <th>{{attended}}</th>
-            <th>
-             {{!-- <a href="/users/miperfil/edit/{{_id}}"> --}}
-             {{!-- <button class="btn btn btn-primary block" type="submit">Cancelar</button> --}}
-             <!-- <form action="/turns/delete/{{_id}}?_method=DELETE" method="POST">
-                <input type="hidden" name="_method" value="DELETE">
-                <button class="btn btn-danger btn-block btn-sm" type="submit">
-                      Cancelar
-                </button>
-            </form>
-            -->
-             {{!-- </a> --}}
-             </th>
+      <th>{{turnoUsuario.name}}</th>
+      <th>{{turnoUsuario.dni}}</th>
+      <th>{{vaccineName}}</th>
+      <th>{{orderDate}}</th>
+      <th>{{attended}}</th>
+      <th>
+        <a href="/turns/turnos-hoy">
+          <input type="button" value="Marcar turno atendido">
+        </a>
+      </th>
     </tr>
     {{/each}}
     {{else}}
-    <center><h1>No hay turnos para mostrar</h1></center>
+    <center>
+      <h1>No hay turnos para mostrar</h1>
+    </center>
     {{/if}}
   </tbody>
 </table>

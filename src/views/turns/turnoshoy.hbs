@@ -11,7 +11,8 @@
       <th scope="col">Vacuna</th>
       <th scope="col">Fecha Asignada</th>
       <th scope="col">Atendido</th>
-      <th scope="col">Acciones</th>
+      <th scope="col">Atender</th>
+      <th scope="col">Aplicar vacuna</th>
     </tr>
   </thead>
   <tbody>
@@ -23,9 +24,22 @@
       <th>{{orderDate}}</th>
       <th>{{attended}}</th>
       <th>
-        <a href="/turns/turnos-hoy">
-          <input type="button" value="Marcar turno atendido">
-        </a>
+      {{#unless resultado.attended}}
+          <form action="/turns/marcarturno/{{_id}}" method="POST">
+            <input type="hidden" name="_method" value="PUT">
+            <button class="btn btn-danger btn-block btn-sm" type="submit">
+              Marcar turno atendido
+            </button>
+          </form>
+      {{/unless}}
+      </th>
+      <th>
+         <form action="/vaccines/aplicarvacuna/{{turnoUsuario._id}}" method="POST">
+            <input type="hidden" name="_method" value="PUT">
+            <button class="btn btn-danger btn-block btn-sm" type="submit">
+              Marcar vacuna aplicada
+            </button>
+          </form>
       </th>
     </tr>
     {{/each}}

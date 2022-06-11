@@ -112,4 +112,15 @@ router.post('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
 router.get('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
     res.redirect('/turns/turnoshoy'); 
 })
+
+//marcar turno
+router.post('/turns/marcarturno/:id', isAuthenticated, async (req, res) => {
+    console.log(req.params.id);
+    const tur = await Turno.findByIdAndUpdate(req.params.id, { "attended" : true });
+        console.log(tur);
+        res.redirect('/users/vacunador/selector-sede');
+    }
+);
+
+
 module.exports = router;

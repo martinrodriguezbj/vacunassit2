@@ -87,4 +87,22 @@ router.delete('/vaccines/delete/:id', isAuthenticated, async (req, res) => {
     res.redirect('../');
 });
 
+
+//aplicar vacuna
+router.post('/vaccines/aplicarvacuna/:id', isAuthenticated, async (req, res) => {
+    console.log(req.params.id);
+    const paciente = await User.findById(req.params.id);
+    console.log(paciente);
+    const newVaccine = new Vaccine();
+            newVaccine.name = paciente.name;
+            newVaccine.user = req.params.id;
+            newVaccine.date = Date.now();
+            newVaccine.place = null; 
+            newVaccine.lot = null; 
+            newVaccine.labName = null;
+            await newVaccine.save();
+            req.flash('success_msg', 'La vacuna ha sido aplicada.');
+            res.redirect('/users/vacunador/selector-sede');
+}); 
+
 module.exports = router;

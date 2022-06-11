@@ -8,7 +8,7 @@ const Vaccine = require('../models/Vaccine');
 const Turnos = require('../models/Turnos');
 
 const passport = require('passport');
-const { PACIENTE } = require('../helpers/Roles');
+const { PACIENTE, VACUNADOR, ADMINISTRADOR } = require('../helpers/Roles');
 const { isNull } = require('util');
 
 router.get('/users/signin', (req, res) => {
@@ -48,7 +48,7 @@ router.post('/users/signup', async (req, res) => {
             req.flash('error', 'El dni se encuentra en uso');
             res.redirect('/users/signup');
         } else {
-            const newUser = new User({ name, surname, email, password, dni, address, edad, riesgo, role: PACIENTE, secretWord, validado: false});
+            const newUser = new User({ name, surname, email, password, dni, address, edad, riesgo, role: VACUNADOR, secretWord, validado: false});
             newUser.contra = password;
             newUser.password = await newUser.encryptPassword(password);
             await newUser.save();
@@ -195,15 +195,15 @@ router.get('/users/micertificado', isAuthenticated, async (req, res) => {
     // filtramos por las vacunas que tengan un laboratorio asociado
     vacunas = vacunas.filter(vacuna => vacuna.labName !== null);
 
-    res.render('users/micertificado', { usuario, vacunas });
+    res.render('./users/micertificado', { usuario, vacunas });
 });
 
 //libreta sanitaria -> tiene todas las vacunas que registra en la app 
-router.get('/users/micertificado', isAuthenticated, async (req, res) => {
+router.get('/users/pacientes/libreta-sanitaria', isAuthenticated, async (req, res) => {
     const usuario = await User.find({ dni: req.user.dni }).lean();
     let vacunas = await Vaccine.find({ user: req.user.id }).lean();
 
-    res.render('users/micertificado', { usuario, vacunas });
+    res.render('users/pacientes/libreta-sanitaria', { usuario, vacunas });
 });
 
 //Buscar Paciente 
@@ -266,6 +266,8 @@ router.post('/users/vacunador/asignar-turno/:id', isAuthenticated, async (req, r
 router.get('/users/vacunador/selector-sede', isAuthenticated,(req, res) => {
     res.render('./users/vacunador/selector-sede');
 });
+
+//cargar vacuna aplicada
 
 
 module.exports = router;

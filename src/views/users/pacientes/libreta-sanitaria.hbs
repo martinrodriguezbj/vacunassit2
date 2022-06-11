@@ -1,6 +1,6 @@
 <h1></h1>
 <h2>
-    <center>Certificado de Vacunación</center>
+    <center>Libreta Sanitaria</center>
 </h2>
 <table class="table table-dark">
     <thead>
@@ -16,12 +16,6 @@
             <th>{{name}}</th>
             <th>{{surname}}</th>
             <th>{{dni}}</th>
-
-            {{!-- <th>
-                <a href="/users/miperfil/edit/{{_id}}">
-                    <input type="button" value="Modificar datos">
-                </a>
-            </th> --}}
         </tr>
         {{/each}}
     </tbody>
@@ -35,8 +29,6 @@
             <th scope="col">Laboratorio</th>
             <th scope="col">Lote</th>
             <th scope="col">Fecha de colocación</th>
-            <th scope="col">Lugar de colocación</th>
-            <th scope="col">Vacunador</th>
         </tr>
     </thead>
     <tbody>
@@ -48,7 +40,6 @@
             <th> {{lot}}</th>
             <th> {{date}}</th>
             <th> {{place}}</th>
-            <th> {{vaccinator}}</th>
         </tr>
         {{/each}}
     {{else}}

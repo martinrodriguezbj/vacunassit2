@@ -23,19 +23,25 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             {{#if isPaciente}}
-              <a class="dropdown-item" href="/turns/solicitar">Solicitar turno</a>
-              <a class="dropdown-item" href="/turns/turnosPasados">Turnos pasados</a>
-              <a class="dropdown-item" href="/turns/turnosVigentes">Turnos vigentes</a>
-              <a class="dropdown-item" href="/turns/misturnos">Mis turnos</a>
-              <a class="dropdown-item" href="/users/miperfil">Mi perfil</a>
-              <a class="dropdown-item" href="/vaccines">Mis vacunas</a>
-              <a class="dropdown-item" href="/vaccines/add">Agregar una vacuna</a>
-              <a class="dropdown-item" href="/users/micertificado">Certificado de Vacunación</a>
-              <a class="dropdown-item" href="/users/edit-pass">Cambiar Contraseña</a>
-              <a class="dropdown-item" href="/users/valid-id">Validar Identidad</a>
+            <a class="dropdown-item" href="/turns/solicitar">Solicitar turno</a>
+            <a class="dropdown-item" href="/turns/turnosPasados">Turnos pasados</a>
+            <a class="dropdown-item" href="/turns/turnosVigentes">Turnos vigentes</a>
+            <a class="dropdown-item" href="/turns/misturnos">Mis turnos</a>
+            <a class="dropdown-item" href="/users/miperfil">Mi perfil</a>
+            <a class="dropdown-item" href="/vaccines">Mis vacunas</a>
+            <a class="dropdown-item" href="/vaccines/add">Agregar una vacuna</a>
+            <a class="dropdown-item" href="/users/micertificado">Certificado de Vacunación</a>
+            <a class="dropdown-item" href="/users/pacientes/libreta-sanitaria">Libreta Sanitaria</a>
+            <a class="dropdown-item" href="/users/edit-pass">Cambiar Contraseña</a>
+            <a class="dropdown-item" href="/users/valid-id">Validar Identidad</a>
             {{/if}}
 
             {{#if isVacunador}}
+            <a class="dropdown-item" href="/users/vacunador/selector-sede">Turnos de hoy</a>
+            <a class="dropdown-item" href="/users/buscar-paciente">Buscar Paciente</a>
+            {{/if}}
+
+            {{#if isAdministrador}}
             <a class="dropdown-item" href="/users/vacunador/selector-sede">Turnos de hoy</a>
             <a class="dropdown-item" href="/users/buscar-paciente">Buscar Paciente</a>
             {{/if}}

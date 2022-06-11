@@ -5,6 +5,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../helpers/auth');
 const User = require('../models/User');
 const Vaccine = require('../models/Vaccine');
+const Turnos = require('../models/Turnos');
 
 const passport = require('passport');
 const { PACIENTE } = require('../helpers/Roles');
@@ -206,7 +207,7 @@ router.get('/users/micertificado', isAuthenticated, async (req, res) => {
 });
 
 //Buscar Paciente 
-router.get('/users/buscar-paciente', isAuthenticated,(req, res) => {
+router.get('/users/buscar-paciente', isAuthenticated, (req, res) => {
     res.render('./users/buscarP');
 });
 
@@ -220,6 +221,46 @@ router.post('/users/buscarP', isAuthenticated, async (req, res) => {
         console.log(paciente); 
     }
 });
+
+//Agregar a la lista de turnos
+router.get('/users/vacunador/nuevo-turno/:id', isAuthenticated, async (req, res) => {
+    res.render("./users/vacunador/asignar-turno", { id: req.params.id });
+})
+
+// Asignar turno a paciente
+router.post('/users/vacunador/asignar-turno/:id', isAuthenticated, async (req, res) => {
+    const { vaccineName, sede  } = req.body;
+    const patientID = req.params.id;
+
+    const vaccName = await Turnos.findOne( {vaccineName : vaccineName, user : patientID});
+    const vaccAplied = await Vaccine.findOne({name : vaccineName, user : patientID})
+
+    if (vaccName) {
+        req.flash('error', 'El paciente ya tiene un turno para esta vacuna');
+        res.redirect('/users/buscar-paciente'); 
+        return;
+    }
+    if (vaccAplied) {
+        req.flash('error', 'El paciente ya tiene la vacuna asignada');
+        res.redirect('/users/buscar-paciente');
+        return;
+    }
+
+    const turno = new Turnos({
+        sede,
+        vaccineName,
+        date: new Date(),
+        user: patientID,
+        appointed: true,
+        attended: false,
+        orderDate: Date.now(),
+    });
+
+    await turno.save();
+    req.flash('success_msg', 'Turno asignado');
+    res.redirect('/users/buscar-paciente');
+})
+
 
 //selector de sede
 router.get('/users/vacunador/selector-sede', isAuthenticated,(req, res) => {

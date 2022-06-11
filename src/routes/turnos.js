@@ -19,33 +19,40 @@ router.get('/turns/solicitar', isAuthenticated, (req, res) => {
 router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
     const { vaccineName, sede }= req.body ;
     const errors = [];
-    if(!vaccineName){
-        errors.push({text: 'Por favor seleccione una vacuna'});
-    } else {
-        
-        const vaccName = await Turno.findOne( {vaccineName : vaccineName, user : req.user.id});
-        const vaccAplied= await Vaccine.findOne({name : vaccineName, user : req.user.id})
-        if(vaccName){
-            req.flash('error', 'Usted ya tiene un turno para esta vacuna');
-            res.redirect('/turns/misturnos'); 
-        }else{
-            if(vaccAplied){
-                req.flash('error', 'Ya tiene aplicada esta vacuna, no puede solicitar un turno');
+    const usuario = await User.findById(req.user.id);
+    console.log(usuario.validado);
+    if (usuario.validado){
+        if(!vaccineName){
+            errors.push({text: 'Por favor seleccione una vacuna'});
+        } else {
+            
+            const vaccName = await Turno.findOne( {vaccineName : vaccineName, user : req.user.id});
+            const vaccAplied= await Vaccine.findOne({name : vaccineName, user : req.user.id})
+            if(vaccName){
+                req.flash('error', 'Usted ya tiene un turno para esta vacuna');
                 res.redirect('/turns/misturnos'); 
             }else{
-                const newTurno = new Turno();
-                newTurno.vaccineName=vaccineName;
-                newTurno.user = req.user.id;
-                newTurno.appointed = false;
-                newTurno.attended = false;
-                newTurno.orderDate= Date.now();
-                newTurno.sede = sede; 
-                await newTurno.save();
-                req.flash('success_msg', 'turno agregado correctamente');
-                res.redirect('/turns/misturnos');
+                if(vaccAplied){
+                    req.flash('error', 'Ya tiene aplicada esta vacuna, no puede solicitar un turno');
+                    res.redirect('/turns/misturnos'); 
+                }else{
+                    const newTurno = new Turno();
+                    newTurno.vaccineName=vaccineName;
+                    newTurno.user = req.user.id;
+                    newTurno.appointed = false;
+                    newTurno.attended = false;
+                    newTurno.orderDate= Date.now();
+                    newTurno.sede = sede; 
+                    await newTurno.save();
+                    req.flash('success_msg', 'turno agregado correctamente');
+                    res.redirect('/turns/misturnos');
+                }
             }
-        }
-    }
+        }    
+    }else{
+        req.flash('error', 'Debe validar su identidad para poder solicitar turnos');
+        res.redirect('/users/miperfil');
+    }    
 });
 
 router.get('/turns/turnosPasados', isAuthenticated, async (req, res) => {

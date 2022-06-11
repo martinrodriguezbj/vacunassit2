@@ -149,7 +149,8 @@ router.put('/users/preEdit-pass/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-//validar identidad 
+//validar identidad {SOLO SIMULACION}  FALTARÍA MODIFICAR EL USUARIO EN LA BD COMO "VALIDADO" ¿PUT,{:id}?
+
 router.get('/users/valid-id', isAuthenticated, async (req, res) => {
     const usuari = await User.find({ dni: req.user.dni }).lean();
     res.render('users/valid-id', { usuari });
@@ -160,18 +161,27 @@ router.post('/users/validated', isAuthenticated, async (req, res) => {
     console.log(usuario);
     console.log({ files: req.files });
     const files = req.files;
-
-    if (files === null) {
-        req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Debe cargar una foto.');
-    } else {
-        const file = req.files.fname;
-        if (file.name == 'valida.jpg') {
-            await User.findByIdAndUpdate(req.params.id, { validado : true });
-            req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
+    //control de que la identidad no haya sido previamente validada 
+    if (usuario.validado == false){
+        //caso en que no se sube ninguna foto
+        if (files === null) { 
+            req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Debe cargar una foto.');
         } else {
-            req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Intente nuevamente.');
-        }
+            //si se sube un archivo
+            const file = req.files.fname;
+            if (file.name !== 'invalida.jpg') {
+                //si el archivo no se llama invalida.jpg, se valida y se actualiza el campo "validado" del usuario a true.
+                const us = await User.findByIdAndUpdate(usuario.id, { validado : true });
+                req.flash('success_msg', 'Identidad de ' + usuario.name + ' ' + usuario.surname + ' validada.');
+            } else {
+                //Si se llama invalido, no se valida y se informa. 
+                req.flash('error', 'Validacion de ' + usuario.name + ' ' + usuario.surname + ' fallida. Intente nuevamente.');
+            }
+        } 
+    } else {
+            req.flash('error', 'El usuario' + usuario.name + ' ' + usuario.surname + ' ya ha realizado la validación de identidad.');
     }
+    
 
     res.redirect('/users/miperfil');
 });

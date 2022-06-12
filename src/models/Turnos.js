@@ -8,6 +8,7 @@ const TurnosSchema = new Schema({
     user: {type: mongoose.Types.ObjectId},
     appointed: {type: Boolean},
     attended: {type: Boolean},
+    applied: {type: Boolean},
     orderDate: {type: Date}
 })
 

@@ -3,6 +3,7 @@ const res = require('express/lib/response');
 const router = express.Router();
 
 const Vaccine = require('../models/Vaccine');
+const Turno = require('../models/Turnos');
 const { isAuthenticated } = require('../helpers/auth');
 const User = require('../models/User');
 const { ADMINISTRADOR } = require('../helpers/Roles');
@@ -91,6 +92,7 @@ router.delete('/vaccines/delete/:id', isAuthenticated, async (req, res) => {
 router.post('/vaccines/aplicarvacuna/:id', isAuthenticated, async (req, res) => {
     const vacunador = await User.findById(req.user.id); 
     const paciente = await User.findById(req.params.id);
+    const tur = await Turno.findOneAndUpdate({ id : req.body.id}, {"applied" : true});
     const newVaccine = new Vaccine();
     newVaccine.name = paciente.name;
     newVaccine.user = req.params.id;
@@ -105,6 +107,31 @@ router.post('/vaccines/aplicarvacuna/:id', isAuthenticated, async (req, res) => 
 });
 
 router.put('/users/vacunador/cargar-datos-vacuna/:id', isAuthenticated, async (req, res) => {
+    const { name, labName, lot, vaccinator, place } = req.body;
+    const vacuna = await Vaccine.findByIdAndUpdate(req.params.id, { name: name, labName: labName, lot: lot, vaccinator: vaccinator, place: place });
+    req.flash('success_msg', 'Se guardaron los datos de la vacuna');
+    res.redirect('/users/vacunador/selector-sede');
+
+});
+
+//aplicar vacuna
+router.post('/vaccines/aplicarvacuna2/:id', isAuthenticated, async (req, res) => {
+    const vacunador = await User.findById(req.user.id); 
+    const paciente = await User.findById(req.params.id);
+    const newVaccine = new Vaccine();
+    newVaccine.name = paciente.name;
+    newVaccine.user = req.params.id;
+    newVaccine.date = Date.now();
+    newVaccine.place = null; //esta sede
+    newVaccine.lot = null;
+    newVaccine.labName = null;
+    newVaccine.vaccinator = vacunador.name; 
+    await newVaccine.save();
+    req.flash('success_msg', 'La vacuna ha sido aplicada.');
+    res.render('./users/vacunador/cargar-datos-vacuna2', { newVaccine });
+});
+
+router.put('/users/vacunador/cargar-datos-vacuna2/:id', isAuthenticated, async (req, res) => {
     const { name, labName, lot, vaccinator, place } = req.body;
     const vacuna = await Vaccine.findByIdAndUpdate(req.params.id, { name: name, labName: labName, lot: lot, vaccinator: vaccinator, place: place });
     req.flash('success_msg', 'Se guardaron los datos de la vacuna');

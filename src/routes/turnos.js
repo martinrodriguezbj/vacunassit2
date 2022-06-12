@@ -41,6 +41,7 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                     newTurno.user = req.user.id;
                     newTurno.appointed = false;
                     newTurno.attended = false;
+                    newTurno.applied = false;
                     newTurno.orderDate= Date.now();
                     newTurno.sede = sede; 
                     await newTurno.save();

@@ -10,8 +10,7 @@
       <th scope="col">DNI</th>
       <th scope="col">Vacuna</th>
       <th scope="col">Fecha Asignada</th>
-      <th scope="col">Atendido</th>
-      <th scope="col">Atender</th>
+      <th scope="col">Estado</th>
       <th scope="col">Aplicar vacuna</th>
     </tr>
   </thead>
@@ -22,24 +21,29 @@
       <th>{{turnoUsuario.dni}}</th>
       <th>{{vaccineName}}</th>
       <th>{{orderDate}}</th>
-      <th>{{attended}}</th>
       <th>
-      {{#unless resultado.attended}}
+      {{#unless attended}}
           <form action="/turns/marcarturno/{{_id}}" method="POST">
             <input type="hidden" name="_method" value="PUT">
             <button class="btn btn-danger btn-block btn-sm" type="submit">
               Marcar turno atendido
             </button>
           </form>
+          {{else}}
+          <a>Atendido</a>
       {{/unless}}
       </th>
       <th>
+        {{#unless applied}}
          <form action="/vaccines/aplicarvacuna/{{turnoUsuario._id}}" method="POST"> 
             <input type="hidden" name="_method" value="PUT">
             <button class="btn btn-danger btn-block btn-sm" type="submit">
               Marcar vacuna aplicada
             </button>
           </form>
+                    {{else}}
+          <a>Vacuna aplicada</a>
+      {{/unless}}
       </th>
     </tr>
     {{/each}}

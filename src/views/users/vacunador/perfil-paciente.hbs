@@ -26,9 +26,12 @@
             <th>{{address}}</th>
             <th>{{email}}</th>
             <th>
-                <a href="/users/vacunador/agregar-vacuna/{{_id}}">
-                    <input type="button" value="Registrar Vacuna">
-                </a>
+         <form action="/vaccines/aplicarvacuna2/{{_id}}" method="POST"> 
+            <input type="hidden" name="_method" value="PUT">
+            <button class="" type="submit">
+               Cargar vacuna
+            </button>
+          </form>
                 <h3></h3>
                 <a href="/users/vacunador/nuevo-turno/{{_id}}">
                     <input type="button" value="Agregar a la lista de turnos">

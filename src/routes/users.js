@@ -208,10 +208,10 @@ router.get('/users/pacientes/libreta-sanitaria', isAuthenticated, async (req, re
 
 //Buscar Paciente 
 router.get('/users/buscar-paciente', isAuthenticated, (req, res) => {
-    res.render('./users/buscarP');
+    res.render('./users/vacunador/buscarP');
 });
 
-router.post('/users/buscarP', isAuthenticated, async (req, res) => {
+router.post('/users/vacunador/buscarP', isAuthenticated, async (req, res) => {
     const paciente = await User.find(req.body);
     if (Object.entries(paciente) == 0) {
         req.flash('error_msg', 'El DNI no se encuentra registrado');
@@ -267,7 +267,12 @@ router.get('/users/vacunador/selector-sede', isAuthenticated,(req, res) => {
     res.render('./users/vacunador/selector-sede');
 });
 
-//cargar vacuna aplicada
+//agregar vacunas
+
+//Agregar a la lista de turnos
+router.get('/users/vacunador/agregar-vacuna/:id', isAuthenticated, async (req, res) => {
+    res.render("./users/vacunador/asignar-turno", { id: req.params.id });
+})
 
 
 module.exports = router;

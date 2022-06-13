@@ -1,0 +1,55 @@
+<h1></h1>
+<h2>
+    <center>Paciente</center>
+</h2>
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th scope="col">Nombre y apellido</th>
+            <th scope="col">DNI</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each paciente}}
+        <tr>
+            <th>{{name}} {{surname}}</th>
+            <th>{{dni}}</th>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<h3></h3>
+<h2>
+    <center>Vacunas registradas</center>
+</h2>
+{{#if vacunas}}
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Fecha de Aplicación</th>
+            <th scope="col">Lugar de aplicación</th>
+            <th scope="col">Lote</th>
+            <th scope="col">Marca/Laboratorio</th>
+            <th scope="col">vacunador</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each vacunas}}
+        <tr>
+            <th>{{name}}</th>
+            <th>{{date}}</th>
+            <th>{{place}}</th>
+            <th>{{lot}}</th>
+            <th>{{labName}}</th>
+            <th>{{vaccinator}}</th>
+        </tr>
+        {{/each}}
+        {{else}}
+        <center>
+            <h1>El paciente no registra vacunas.</h1>
+        </center>
+        {{/if}}
+    </tbody>
+</table>

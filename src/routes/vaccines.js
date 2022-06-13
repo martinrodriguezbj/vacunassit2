@@ -15,7 +15,6 @@ router.get('/vaccines/add', isAuthenticated, async (req, res) => {
 
 router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
     const { name, date } = req.body;
-    console.log(name, date);
     const errors = [];
     if (!name) {
         errors.push({ text: 'Debe elegir una vacuna' });
@@ -24,7 +23,6 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
         console.log(req.user.id);
         const vaccineName = await Vaccine.findOne({ name: name, user: req.user.id });
         if (vaccineName) {
-            console.log('vacuna ya registrada');
             req.flash('error', 'La vacuna ya se encuentra registrada');
             res.redirect('/vaccines');
         } else {
@@ -58,7 +56,6 @@ router.get('/users/miperfil', isAuthenticated, async (req, res) => {
 
 router.get('/users/miperfil/edit/:id', isAuthenticated, async (req, res) => {
     const usuari = await User.findById(req.params.id).lean();
-    console.log(req.params.id);
     res.render('users/edit', { usuari });
 });
 
@@ -93,7 +90,6 @@ router.post('/vaccines/aplicarvacuna/:id', isAuthenticated, async (req, res) => 
     const { vacName, sede, turnoID } = req.body;
     const vacunador = await User.findById(req.user.id);
     const tur = await Turno.findByIdAndUpdate(turnoID, { applied: true });
-    console.log(tur)
     const newVaccine = new Vaccine();
 
     const fullname = vacunador.name + ' ' + vacunador.surname;
@@ -127,15 +123,12 @@ router.post('/vaccines/aplicarvacuna2/:id', isAuthenticated, async (req, res) =>
 
 router.put('/users/vacunador/cargar-datos-vacuna2/:id', isAuthenticated, async (req, res) => {
     const { name, labName, lot, vaccinator, place, date } = req.body;
-    console.log('datos del body: ' + name, labName, lot, vaccinator, place);
     const errors = [];
     if (!name) {
         errors.push({ text: 'Debe elegir una vacuna' });
     } else {
-        console.log(req.params.id);
         const vaccineName = await Vaccine.findOne({ name: name, user: req.params.id });
         if (vaccineName) {
-            console.log('vacuna ya registrada');
             req.flash('error', 'La vacuna ya se encuentra registrada');
             res.redirect('/users/vacunador/buscar-paciente');
         } else {
@@ -148,6 +141,13 @@ router.put('/users/vacunador/cargar-datos-vacuna2/:id', isAuthenticated, async (
 
     }
 
+});
+
+//buscar vacunas de un paciente
+router.post('/vaccines/buscar-vacunas/:id', isAuthenticated, async (req, res) => {
+    const paciente = await User.findById(req.params.id);
+    const vacunas = await Vaccine.find({user: paciente.id}); 
+    res.render('./users/vacunador/mostrar-vacunas', { paciente, vacunas });
 });
 
 module.exports = router;

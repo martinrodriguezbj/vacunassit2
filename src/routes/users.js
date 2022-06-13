@@ -223,7 +223,6 @@ router.post('/users/vacunador/buscarP', isAuthenticated, async (req, res) => {
             req.flash('error', "El DNI pertenece al personal del vacunatorio")
             res.redirect('/users/vacunador/buscar-paciente');
         }
-        console.log(paciente); 
     }
 });
 

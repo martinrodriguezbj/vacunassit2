@@ -20,7 +20,6 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
     const { vaccineName, sede }= req.body ;
     const errors = [];
     const usuario = await User.findById(req.user.id);
-    console.log(usuario.validado);
     if (usuario.validado){
         if(!vaccineName){
             errors.push({text: 'Por favor seleccione una vacuna'});
@@ -93,7 +92,6 @@ router.delete('/turns/cancel/:id', isAuthenticated, async (req, res) => {
 //turnos hoy - vacunador
 router.post('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
     const {sede} = req.body;
-    console.log(sede);
     let resultado = await Turno.aggregate([
         {
             $lookup: {
@@ -116,9 +114,7 @@ router.get('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
 
 //marcar turno
 router.post('/turns/marcarturno/:id', isAuthenticated, async (req, res) => {
-    console.log(req.params.id);
     const tur = await Turno.findByIdAndUpdate(req.params.id, { "attended" : true });
-        console.log(tur);
         res.redirect('/users/vacunador/selector-sede');
     }
 );

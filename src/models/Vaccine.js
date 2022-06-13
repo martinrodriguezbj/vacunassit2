@@ -6,7 +6,7 @@ const VaccineSchema = new Schema({
     labName: { type: String, required: false },
     place: { type: String, required: false },
     date: { type: Date, required: false },
-    lot: { type: Number, required: false },
+    lot: { type: String, required: false },
     user: {type: String, required: false}, 
     vaccinator: {type: String, require: false}
 })

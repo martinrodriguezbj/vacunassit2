@@ -207,17 +207,22 @@ router.get('/users/pacientes/libreta-sanitaria', isAuthenticated, async (req, re
 });
 
 //Buscar Paciente 
-router.get('/users/buscar-paciente', isAuthenticated, (req, res) => {
+router.get('/users/vacunador/buscar-paciente', isAuthenticated, (req, res) => {
     res.render('./users/vacunador/buscarP');
 });
 
 router.post('/users/vacunador/buscarP', isAuthenticated, async (req, res) => {
-    const paciente = await User.find(req.body);
+    const paciente = await User.find(req.body).lean();
     if (Object.entries(paciente) == 0) {
         req.flash('error_msg', 'El DNI no se encuentra registrado');
-        res.redirect('/users/buscar-paciente');
+        res.redirect('/users/vacunador/buscar-paciente');
     } else {
-        res.render('./users/vacunador/perfil-paciente', { paciente }); //la ruta para renderizar
+        if (paciente['0'].role === 'paciente' ){
+            res.render('./users/vacunador/perfil-paciente', { paciente }); 
+        }else{
+            req.flash('error', "El DNI pertenece al personal del vacunatorio")
+            res.redirect('/users/vacunador/buscar-paciente');
+        }
         console.log(paciente); 
     }
 });
@@ -237,12 +242,12 @@ router.post('/users/vacunador/asignar-turno/:id', isAuthenticated, async (req, r
 
     if (vaccName) {
         req.flash('error', 'El paciente ya tiene un turno para esta vacuna');
-        res.redirect('/users/buscar-paciente'); 
+        res.redirect('/users/vacunador/buscar-paciente'); 
         return;
     }
     if (vaccAplied) {
         req.flash('error', 'El paciente ya tiene la vacuna asignada');
-        res.redirect('/users/buscar-paciente');
+        res.redirect('/users/vacunador/buscar-paciente');
         return;
     }
 
@@ -258,7 +263,7 @@ router.post('/users/vacunador/asignar-turno/:id', isAuthenticated, async (req, r
 
     await turno.save();
     req.flash('success_msg', 'Turno asignado');
-    res.redirect('/users/buscar-paciente');
+    res.redirect('/users/vacunador/buscar-paciente');
 })
 
 

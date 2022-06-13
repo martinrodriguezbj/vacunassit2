@@ -17,33 +17,37 @@
   <tbody>
     {{#each resultado}}
     <tr>
-      <th>{{turnoUsuario.name}}</th>
+      <th>{{turnoUsuario.name}}, {{turnoUsuario.surname}}</th>
       <th>{{turnoUsuario.dni}}</th>
       <th>{{vaccineName}}</th>
       <th>{{orderDate}}</th>
+ 
       <th>
-      {{#unless attended}}
-          <form action="/turns/marcarturno/{{_id}}" method="POST">
-            <input type="hidden" name="_method" value="PUT">
-            <button class="btn btn-danger btn-block btn-sm" type="submit">
-              Marcar turno atendido
-            </button>
-          </form>
-          {{else}}
-          <a>Atendido</a>
-      {{/unless}}
+        {{#unless attended}}
+        <form action="/turns/marcarturno/{{_id}}" method="POST">
+          <input type="hidden" name="_method" value="PUT">
+          <button class="btn btn-danger btn-block btn-sm" type="submit">
+            Marcar turno atendido
+          </button>
+        </form>
+        {{else}}
+        <a>Atendido</a>
+        {{/unless}}
       </th>
       <th>
         {{#unless applied}}
-         <form action="/vaccines/aplicarvacuna/{{turnoUsuario._id}}" method="POST"> 
-            <input type="hidden" name="_method" value="PUT">
-            <button class="btn btn-danger btn-block btn-sm" type="submit">
-              Marcar vacuna aplicada
-            </button>
-          </form>
-                    {{else}}
-          <a>Vacuna aplicada</a>
-      {{/unless}}
+        <form action="/vaccines/aplicarvacuna/{{turnoUsuario._id}}" method="POST">
+          <input type="hidden" name="_method" value="PUT">
+          <input type="hidden" name="vacName" value="{{vaccineName}}">
+          <input type="hidden" name="sede" value="{{sede}}">
+          <input type="hidden" name="turnoID" value="{{_id}}">
+          <button class="btn btn-danger btn-block btn-sm" type="submit">
+            Marcar vacuna aplicada
+          </button>
+        </form>
+        {{else}}
+        <a>Vacuna aplicada</a>
+        {{/unless}}
       </th>
     </tr>
     {{/each}}

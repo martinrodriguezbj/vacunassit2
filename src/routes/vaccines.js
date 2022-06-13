@@ -90,52 +90,63 @@ router.delete('/vaccines/delete/:id', isAuthenticated, async (req, res) => {
 
 //aplicar vacuna
 router.post('/vaccines/aplicarvacuna/:id', isAuthenticated, async (req, res) => {
-    const vacunador = await User.findById(req.user.id); 
-    const paciente = await User.findById(req.params.id);
-    const tur = await Turno.findOneAndUpdate({ id : req.body.id}, {"applied" : true});
+    const { vacName, sede, turnoID } = req.body;
+    const vacunador = await User.findById(req.user.id);
+    const tur = await Turno.findByIdAndUpdate(turnoID, { applied: true });
+    console.log(tur)
     const newVaccine = new Vaccine();
-    newVaccine.name = paciente.name;
+
+    const fullname = vacunador.name + ' ' + vacunador.surname;
+    newVaccine.name = vacName;
     newVaccine.user = req.params.id;
     newVaccine.date = Date.now();
-    newVaccine.place = null; //esta sede
+    newVaccine.place = sede;
     newVaccine.lot = null;
     newVaccine.labName = null;
-    newVaccine.vaccinator = vacunador.name; 
+    newVaccine.vaccinator = fullname;
     await newVaccine.save();
     req.flash('success_msg', 'La vacuna ha sido aplicada.');
     res.render('./users/vacunador/cargar-datos-vacuna', { newVaccine });
 });
 
 router.put('/users/vacunador/cargar-datos-vacuna/:id', isAuthenticated, async (req, res) => {
-    const { name, labName, lot, vaccinator, place } = req.body;
-    const vacuna = await Vaccine.findByIdAndUpdate(req.params.id, { name: name, labName: labName, lot: lot, vaccinator: vaccinator, place: place });
+    const { lot, labName } = req.body;
+    const vacuna = await Vaccine.findByIdAndUpdate(req.params.id, { lot: lot, labName: labName });
     req.flash('success_msg', 'Se guardaron los datos de la vacuna');
     res.redirect('/users/vacunador/selector-sede');
 
 });
 
-//aplicar vacuna
+//aplicar vacuna - desde 'buscar paciente' 
 router.post('/vaccines/aplicarvacuna2/:id', isAuthenticated, async (req, res) => {
-    const vacunador = await User.findById(req.user.id); 
+    const vacunador = await User.findById(req.user.id);
     const paciente = await User.findById(req.params.id);
-    const newVaccine = new Vaccine();
-    newVaccine.name = paciente.name;
-    newVaccine.user = req.params.id;
-    newVaccine.date = Date.now();
-    newVaccine.place = null; //esta sede
-    newVaccine.lot = null;
-    newVaccine.labName = null;
-    newVaccine.vaccinator = vacunador.name; 
-    await newVaccine.save();
-    req.flash('success_msg', 'La vacuna ha sido aplicada.');
-    res.render('./users/vacunador/cargar-datos-vacuna2', { newVaccine });
+
+    res.render('./users/vacunador/cargar-datos-vacuna2', { paciente });
 });
 
 router.put('/users/vacunador/cargar-datos-vacuna2/:id', isAuthenticated, async (req, res) => {
-    const { name, labName, lot, vaccinator, place } = req.body;
-    const vacuna = await Vaccine.findByIdAndUpdate(req.params.id, { name: name, labName: labName, lot: lot, vaccinator: vaccinator, place: place });
-    req.flash('success_msg', 'Se guardaron los datos de la vacuna');
-    res.redirect('/users/vacunador/selector-sede');
+    const { name, labName, lot, vaccinator, place, date } = req.body;
+    console.log('datos del body: ' + name, labName, lot, vaccinator, place);
+    const errors = [];
+    if (!name) {
+        errors.push({ text: 'Debe elegir una vacuna' });
+    } else {
+        console.log(req.params.id);
+        const vaccineName = await Vaccine.findOne({ name: name, user: req.params.id });
+        if (vaccineName) {
+            console.log('vacuna ya registrada');
+            req.flash('error', 'La vacuna ya se encuentra registrada');
+            res.redirect('/users/vacunador/buscar-paciente');
+        } else {
+            const newVaccine = new Vaccine({ name, date, place, lot, labName, vaccinator });
+            newVaccine.user = req.params.id;
+            await newVaccine.save();
+            req.flash('success_msg', 'Se ha registrado una nueva vacuna.');
+            res.redirect('/users/vacunador/buscar-paciente');
+        }
+
+    }
 
 });
 

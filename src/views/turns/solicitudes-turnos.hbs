@@ -1,0 +1,41 @@
+<h2>
+  <center>Solicitudes de turnos</center>
+
+</h2>
+{{#if turnos}}
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">Paciente</th>
+      <th scope="col">DNI</th>
+      <th scope="col">Vacuna</th>
+      <th scope="col">Fecha Asignada</th>
+      <th scope="col">Obtener turno</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each turnos}}
+    <tr>
+      <th>{{usuario.name}}, {{usuario.surname}}</th>
+      <th>{{usuario.dni}}</th>
+      <th>{{vaccineName}}</th>
+      <th>{{orderDate}}</th>
+ 
+      <th>
+        <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
+          <input type="hidden" name="_method" value="PUT">
+          <button class="btn btn-danger btn-block btn-sm" type="submit">
+           Obtener turno
+          </button>
+        </form>
+      </th>
+
+    </tr>
+    {{/each}}
+    {{else}}
+    <center>
+      <h1>No hay turnos para mostrar</h1>
+    </center>
+    {{/if}}
+  </tbody>
+</table>

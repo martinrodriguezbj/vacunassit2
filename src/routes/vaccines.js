@@ -16,27 +16,41 @@ router.get('/vaccines/add', isAuthenticated, async (req, res) => {
 router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
     const { name, date } = req.body;
     const errors = [];
+
+    // Compare if the date coming is not in the future
+    const today = new Date();
+    const dateToCompare = new Date(date);
+    if (dateToCompare > today) {
+        errors.push({ text: 'La fecha no puede ser mayor a la actual'});
+    }
+
+    // Si no envia name, error
     if (!name) {
         errors.push({ text: 'Debe elegir una vacuna' });
-
-    } else {
-        console.log(req.user.id);
-        const vaccineName = await Vaccine.findOne({ name: name, user: req.user.id });
-        if (vaccineName) {
-            req.flash('error', 'La vacuna ya se encuentra registrada');
-            res.redirect('/vaccines');
-        } else {
-            const newVaccine = new Vaccine({ name, date });
-            newVaccine.user = req.user.id;
-            newVaccine.place = null;
-            newVaccine.lot = null;
-            newVaccine.labName = null;
-            await newVaccine.save();
-            req.flash('success_msg', 'Se ha registrado una nueva vacuna.');
-            res.redirect('/vaccines');
-        }
-
     }
+    
+    // Validar que la vacuna no haya sido registrada
+    const vaccineName = await Vaccine.findOne({ name: name, user: req.user.id });
+    if (vaccineName) {
+        errors.push({ text: 'La vacuna ya se encuentra registrada' });
+    }
+
+    // Si hay errores, informalos
+    if (errors.length > 0) {
+        req.flash('error', errors.map(error => error.text).join(" y "));
+        res.redirect('/vaccines');
+        return;
+    };
+
+    // Si no hay errores, crear la vacuna
+    const newVaccine = new Vaccine({ name, date });
+    newVaccine.user = req.user.id;
+    newVaccine.place = null;
+    newVaccine.lot = null;
+    newVaccine.labName = null;
+    await newVaccine.save();
+    req.flash('success_msg', 'Se ha registrado una nueva vacuna.');
+    res.redirect('/vaccines');
 });
 
 router.get('/vaccines', isAuthenticated, async (req, res) => {

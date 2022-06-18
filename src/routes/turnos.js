@@ -89,6 +89,39 @@ router.delete('/turns/cancel/:id', isAuthenticated, async (req, res) => {
     }
 });
 
+router.get('/turnos/solicitudes-turnos', isAuthenticated, async (req, res) => {
+    const turnos = await Turno.aggregate([
+        {
+            $lookup: {
+                from:'users',
+                localField:'user',
+                foreignField:'_id',
+                as:'usuario'
+            }
+        },
+        { $unwind: "$usuario"}
+    ])
+
+    turnos.filter(turno => turno.appointed === false);
+
+    res.render('turns/solicitudes-turnos', {turnos});
+})
+
+router.post('/turns/solicitudes-turnos/sugerir/:id', async (req, res) => {
+    const {id} = req.params;
+    const turno = await Turno.findById(id);
+    const paciente = await User.findById(turno.user);
+
+    if (paciente.edad > 60 || paciente.riesgo === "Si") {
+        req.flash('error', 'El paciente es paciente de riesgo');
+        res.redirect('/turnos/solicitudes-turnos');
+        return
+    }
+    req.flash('error', 'El paciente es paciente NO  de riesgo');
+    res.redirect('/turnos/solicitudes-turnos');
+})
+
+
 //turnos hoy - vacunador
 router.post('/turns/turnos-hoy', isAuthenticated, async (req, res) => {
     const {sede} = req.body;

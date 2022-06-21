@@ -48,7 +48,7 @@ router.post('/users/signup', async (req, res) => {
             req.flash('error', 'El dni se encuentra en uso');
             res.redirect('/users/signup');
         } else {
-            const newUser = new User({ name, surname, email, password, dni, address, edad, riesgo, role: VACUNADOR, secretWord, validado: false});
+            const newUser = new User({ name, surname, email, password, dni, address, edad, riesgo, role: ADMINISTRADOR, secretWord, validado: false});
             newUser.contra = password;
             newUser.password = await newUser.encryptPassword(password);
             await newUser.save();
@@ -114,7 +114,6 @@ router.get('/users/edit-pass', isAuthenticated, async (req, res) => {
 
 router.put('/users/edit-pass/:id', isAuthenticated, async (req, res) => {
     const { contra, repetirContra } = req.body;
-    console.log('contra: ' + contra + ' RepContra: ' + repetirContra)
     const u = await User.findById(req.params.id);
 
     if (contra.length < 6) {
@@ -150,7 +149,7 @@ router.put('/users/preEdit-pass/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-//validar identidad {SOLO SIMULACION}  FALTARÍA MODIFICAR EL USUARIO EN LA BD COMO "VALIDADO" ¿PUT,{:id}?
+//validar identidad {SOLO SIMULACION}  
 
 router.get('/users/valid-id', isAuthenticated, async (req, res) => {
     const usuari = await User.find({ dni: req.user.dni }).lean();
@@ -159,8 +158,6 @@ router.get('/users/valid-id', isAuthenticated, async (req, res) => {
 
 router.post('/users/validated', isAuthenticated, async (req, res) => {
     const usuario = req.user
-    console.log(usuario);
-    console.log({ files: req.files });
     const files = req.files;
     //control de que la identidad no haya sido previamente validada 
     if (usuario.validado == false){
@@ -237,7 +234,7 @@ router.post('/users/vacunador/asignar-turno/:id', isAuthenticated, async (req, r
     const patientID = req.params.id;
 
     const vaccName = await Turnos.findOne( {vaccineName : vaccineName, user : patientID});
-    const vaccAplied = await Vaccine.findOne({name : vaccineName, user : patientID})
+    const vaccAplied = await Vaccine.findOne({name : vaccineName, user : patientID}); 
 
     if (vaccName) {
         req.flash('error', 'El paciente ya tiene un turno para esta vacuna');
@@ -271,12 +268,144 @@ router.get('/users/vacunador/selector-sede', isAuthenticated,(req, res) => {
     res.render('./users/vacunador/selector-sede');
 });
 
-//agregar vacunas
-
 //Agregar a la lista de turnos
 router.get('/users/vacunador/agregar-vacuna/:id', isAuthenticated, async (req, res) => {
     res.render("./users/vacunador/asignar-turno", { id: req.params.id });
 })
 
+//perfil vacunador
+router.get('/users/vacunador/mi-perfil', isAuthenticated, async (req, res) => {
+    const vacunador = await User.find({ dni: req.user.dni }).lean();
+    res.render('users/vacunador/perfil-vacunador', { vacunador });
+});
+
+//Buscar Vacunador 
+router.get('/users/administrador/buscar-vacunador', isAuthenticated, (req, res) => {
+    res.render('./users/administrador/buscarVac');
+});
+
+router.post('/users/vacunador/buscarVac', isAuthenticated, async (req, res) => {
+    const vacunador = await User.find(req.body).lean();
+    if (Object.entries(vacunador) == 0) {
+        req.flash('error_msg', 'El DNI no está registrado.');
+        res.redirect('/users/administrador/buscar-vacunador');
+    } else {
+        if (vacunador['0'].role === 'vacunador' ){
+            console.log(vacunador); 
+            res.render('./users/administrador/perfil-vacunador', { vacunador }); 
+        }else{
+            req.flash('error', "El DNI no pertenece a un vacunador.")
+            res.redirect('/users/vacunador/buscar-paciente');
+        }
+    }
+});
+
+//eliminar vacunador
+router.delete('/users/administrador/delete/:id', isAuthenticated, async (req, res) => {
+    const turnos = await Turnos.find({ vaccinator: req.params.id }).lean(); 
+    if (turnos){
+        req.flash('error', "El vacunador tiene turnos pendientes. Debe reorganizar sus turnos antes de eliminarlo."); 
+        res.redirect('/users/administrador/buscarVac');
+    }else{
+        await Users.findByIdAndDelete(req.params.id);
+        req.flash('success_msg', 'El vacunador ha sido eliminado correctamente.');
+        res.redirect('/users/administrador/buscarVac');
+    }   
+});
+
+//registrar vacunador /users/administrador/registrar-vacunador
+router.get('/users/administrador/registrar-vacunador', (req, res) => {
+    res.render('./users/administrador/registrarVac'); 
+});
+
+router.post('/users/administrador/registrar-vacunador', async (req, res) => {
+    const { name, surname, email, dni} = req.body;
+    const errors = [];
+    if (name.length <= 0) {
+        errors.push({ text: 'Por favor ingresar un nombre' });
+    }
+    if (surname.length <= 0) {
+        errors.push({ text: 'Por favor ingresar un apellido' });
+    }
+    if (errors.length > 0) {
+        res.render('./users/administrador/registrarVac', { errors, name, surname, email, dni });
+    } else {
+        const dniUser = await User.findOne({ dni: dni });
+        if (dniUser) {
+            req.flash('error', 'El dni se encuentra en uso');
+            res.redirect('/users/administrador/registrar-vacunador');
+        } else {
+            const password = "123456"; 
+            const newUser = new User({ name, surname, email, dni, role: VACUNADOR, validado: false});
+            newUser.contra = password;
+            newUser.riesgo = "no"; 
+            newUser.edad = 0; 
+            newUser.password = await newUser.encryptPassword(password);
+            newUser.secretWord = "secreta"; 
+            await newUser.save();
+            console.log(newUser); 
+            req.flash('success_msg', 'Vacunador registrado con éxito');
+            res.redirect('/users/administrador/registrar-vacunador');
+        }
+    }
+});
+
+//registrar vacunador /users/administrador/registrar-vacunador
+router.get('/users/administrador/registrar-paciente', (req, res) => {
+    res.render('./users/administrador/registrarP'); 
+});
+
+router.post('/users/administrador/registrar-paciente', async (req, res) => {
+    const { name, surname, email, dni, address, edad, riesgo} = req.body;
+    const errors = [];
+    if (name.length <= 0) {
+        errors.push({ text: 'Por favor ingresar un nombre' });
+    }
+    if (surname.length <= 0) {
+        errors.push({ text: 'Por favor ingresar un apellido' });
+    }
+    if (riesgo.length <= 0) {
+        errors.push({ text: 'Por favor ingresar si el paciente es de riesgo.' });
+    }
+    if (address.length <= 0) {
+        errors.push({ text: 'Por favor ingresar una dirección' });
+    }
+    if (!edad ) {
+        errors.push({ text: 'Debe ingresar la edad del paciente' });
+    }
+    if (errors.length > 0) {
+        res.render('./users/administrador/registrarP', { name, surname, email, dni, address, edad, riesgo });
+    } else {
+        const dniUser = await User.findOne({ dni: dni });
+        if (dniUser) {
+            req.flash('error', 'El dni se encuentra en uso');
+            res.redirect('/users/administrador/registrar-vacunador');
+        } else {
+            const password = "123456"; 
+            const newUser = new User({ name, surname, email, dni,address, edad, riesgo, role: PACIENTE, validado: false});
+            newUser.contra = password;
+            newUser.password = await newUser.encryptPassword(password);
+            newUser.secretWord = "secreta"; 
+            await newUser.save();
+            console.log(newUser); 
+            req.flash('success_msg', 'Paciente registrado con éxito');
+            res.redirect('/users/administrador/registrar-vacunador');
+        }
+    }
+});
+
+//listar pacientes
+router.get('/users/administrador/listar-pacientes', isAuthenticated, async (req, res) => {
+    let pacientes = await User.find().lean(); 
+    pacientes = pacientes.filter( p => p.role === 'paciente'); 
+    res.render('users/administrador/listarP', { pacientes });
+});
+
+//listar vacunadores
+router.get('/users/administrador/listar-vacunadores', isAuthenticated, async (req, res) => {
+    let vacunadores = await User.find().lean(); 
+    vacunadores = vacunadores.filter( v => v.role === 'vacunador'); 
+    res.render('users/administrador/listarVac', { vacunadores });
+});
 
 module.exports = router;

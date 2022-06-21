@@ -41,7 +41,7 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
                     newTurno.appointed = false;
                     newTurno.attended = false;
                     newTurno.applied = false;
-                    newTurno.orderDate= Date.now();
+                    newTurno.orderDate = null; //new Date("2022-10-26"); 
                     newTurno.sede = sede; 
                     await newTurno.save();
                     req.flash('success_msg', 'turno agregado correctamente');
@@ -79,7 +79,8 @@ router.delete('/turns/delete/:id', isAuthenticated, async (req, res) => {
 //cancelar turno
 router.delete('/turns/cancel/:id', isAuthenticated, async (req, res) => {
     const {orderDate} = await Turno.findById(req.params.id);
-    if (orderDate > Date.now()){
+    console.log(orderDate); 
+    if ( (orderDate > Date.now()) || (orderDate === null) ){
         await Turno.findByIdAndDelete(req.params.id);
         req.flash('success_msg', 'Turno cancelado correctamente');
         res.redirect('/turns/misturnos');
@@ -102,7 +103,7 @@ router.get('/turnos/solicitudes-turnos', isAuthenticated, async (req, res) => {
         { $unwind: "$usuario"}
     ])
 
-    turnos.filter(turno => turno.appointed === false);
+    turnos.filter(turno => turno.orderDate === null);
 
     res.render('turns/solicitudes-turnos', {turnos});
 })

@@ -20,11 +20,11 @@
         <form action="/turns/cancel/{{_id}}?_method=DELETE" method="POST">
           <input type="hidden" name="_method" value="DELETE">
           <!-- Button trigger modal -->
-          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{_id}}">
             Cancelar Turno
           </button>
           <!-- Modal -->
-          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          <div class="modal fade" id="exampleModal{{_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -35,11 +35,11 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <div class="modal-body">
-                  ...
+                <div class="modal-body" style="color:black">
+                  {{vaccineName}}
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">volver</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                   <button type="submit" class="btn btn-danger">Cancelar Turno</button>
                 </div>
               </div>

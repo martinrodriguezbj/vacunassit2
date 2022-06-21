@@ -1,0 +1,33 @@
+<div>
+  <h1></h1>
+  <h1></h1>
+</div>
+<h2>
+  <center>Listado de Pacientes</center>
+</h2>
+{{#if pacientes}}
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">Nombre</th>
+      <th scope="col">Apellido</th>
+      <th scope="col">DNI</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {{#each pacientes}}
+    <tr>
+      <th>{{name}}</th>
+      <th>{{surname}}</th>
+      <th>{{dni}}</th>
+    </tr>
+    {{/each}}
+    {{else}}
+    <center>
+      <h1>No hay pacientes para mostrar</h1>
+    </center>
+    {{/if}}
+  </tbody>
+</table>

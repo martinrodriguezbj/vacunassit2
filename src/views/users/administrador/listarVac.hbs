@@ -1,0 +1,33 @@
+<div>
+  <h1></h1>
+  <h1></h1>
+</div>
+<h2>
+  <center>Listado de Vacunadores</center>
+</h2>
+{{#if vacunadores}}
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">Nombre</th>
+      <th scope="col">Apellido</th>
+      <th scope="col">DNI</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {{#each vacunadores}}
+    <tr>
+      <th>{{name}}</th>
+      <th>{{surname}}</th>
+      <th>{{dni}}</th>
+    </tr>
+    {{/each}}
+    {{else}}
+    <center>
+      <h1>No hay vacunadores para mostrar</h1>
+    </center>
+    {{/if}}
+  </tbody>
+</table>

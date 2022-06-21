@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-md-4 mx-auto">
+    <div class="card">
+      <div class="card-header">
+        Registrar Vacunador
+      </div>
+      <div class="card-body">
+        <form action="/users/administrador/registrar-vacunador" method="POST">
+          <div class="form-group">
+            <input type="text" class="form-control" name="name" placeholder="Nombre" value="{{name}}">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="surname" placeholder="Apellido" value="{{surname}}">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="dni" placeholder="Dni" value="{{dni}}">
+          </div>
+          <h3></h3>
+          <div class="form group">
+            <input type="email" class="form-control" name="email" placeholder="Email" value="{{mail}}"> 
+          </div>
+          <button class="btn btn-primary btn-block">
+            Registrar Vacunador
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

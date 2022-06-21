@@ -1,0 +1,42 @@
+<div class="row">
+  <div class="col-md-4 mx-auto">
+    <div class="card">
+      <div class="card-header">
+        Registrar Paciente
+      </div>
+      <div class="card-body">
+        <form action="/users/administrador/registrar-paciente" method="POST">
+          <div class="form-group">
+            <input type="text" class="form-control" name="name" placeholder="Nombre" value="{{name}}">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="surname" placeholder="Apellido" value="{{surname}}">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="dni" placeholder="Dni" value="{{dni}}">
+          </div>
+                    <div class="form-group">
+            <input type="text" class="form-control" name="address" placeholder="Dirección" value="{{address}}">
+          </div>
+          <div class="form-group">
+            <input type="number" class="form-control" name="edad" placeholder="Edad" value="{{edad}}" min="0" max="100">
+          </div>
+          <div class="form group">
+            <p>¿ES FACTOR DE RIESGO?</p>
+            <select name="riesgo" class="" value="{{riesgo}}">
+              <option>Si</option>
+              <option>No</option>
+            </select>
+          </div>
+          <h3></h3>
+          <div class="form group">
+            <input type="email" class="form-control" name="email" placeholder="Email" value="{{mail}}"> 
+          </div>
+          <button class="btn btn-primary btn-block">
+            Registrar Paciente
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

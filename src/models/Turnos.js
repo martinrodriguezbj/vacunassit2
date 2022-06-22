@@ -9,7 +9,7 @@ const TurnosSchema = new Schema({
     appointed: {type: Boolean},
     attended: {type: Boolean},
     applied: {type: Boolean},
-    orderDate: {type: Date},
+    orderDate: { type: Date, default: Date.now},
     vaccinator: {type: String}
 })
 

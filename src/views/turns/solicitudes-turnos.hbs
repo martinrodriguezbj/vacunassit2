@@ -10,7 +10,9 @@
       <th scope="col">DNI</th>
       <th scope="col">Vacuna</th>
       <th scope="col">Fecha Asignada</th>
+      <th scope="col">Asignar turno</th>
       <th scope="col">Obtener turno</th>
+      <th scope="col">Notificar turno</th>
     </tr>
   </thead>
   <tbody>
@@ -19,17 +21,50 @@
       <th>{{usuario.name}}, {{usuario.surname}}</th>
       <th>{{usuario.dni}}</th>
       <th>{{vaccineName}}</th>
+      {{#if orderDate}}
       <th>{{orderDate}}</th>
- 
+      {{else}}
       <th>
         <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
           <button class="btn btn-danger btn-block btn-sm" type="submit">
-           Obtener turno
+            obetener sugerencia
           </button>
         </form>
       </th>
-
+      {{/if}}
+      {{#if appointed}}
+      <th>Turno Asignado</th>
+      {{else}}
+      <th>
+        <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
+          <input type="hidden" name="_method" value="PUT">
+          <button class="btn btn-danger btn-block btn-sm" type="submit">
+            asignar turno
+          </button>
+        </form>
+      </th>
+      {{/if}}
+      <th>
+        <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
+          <input type="hidden" name="_method" value="PUT">
+          <button class="btn btn-danger btn-block btn-sm" type="submit">
+            Obtener turno
+          </button>
+        </form>
+      </th>
+      {{#if appointed}}
+      <th>Turno notificado?</th>
+      {{else}}
+      <th>
+        <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
+          <input type="hidden" name="_method" value="PUT">
+          <button class="btn btn-danger btn-block btn-sm" type="submit">
+            notificar turno
+          </button>
+        </form>
+      </th>
+      {{/if}}
     </tr>
     {{/each}}
     {{else}}
@@ -37,5 +72,8 @@
       <h1>No hay turnos para mostrar</h1>
     </center>
     {{/if}}
+    </tr>
+
+
   </tbody>
 </table>

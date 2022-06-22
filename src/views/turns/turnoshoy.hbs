@@ -21,7 +21,7 @@
       <th>{{turnoUsuario.dni}}</th>
       <th>{{vaccineName}}</th>
       <th>{{orderDate}}</th>
- 
+
       <th>
         {{#unless attended}}
         <form action="/turns/marcarturno/{{_id}}" method="POST">
@@ -35,6 +35,7 @@
         {{/unless}}
       </th>
       <th>
+        {{#if attended}}
         {{#unless applied}}
         <form action="/vaccines/aplicarvacuna/{{turnoUsuario._id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
@@ -45,9 +46,10 @@
             Marcar vacuna aplicada
           </button>
         </form>
-        {{else}}
+         {{else}} 
         <a>Vacuna aplicada</a>
         {{/unless}}
+        {{/if}}
       </th>
     </tr>
     {{/each}}

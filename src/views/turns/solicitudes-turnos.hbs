@@ -53,13 +53,17 @@
           </button>
         </form>
       </th>
-      {{#if appointed}}
-      <th>Turno notificado?</th>
+      {{#if notified}}
+      <th>
+        Turno notificado
+          </button>
+        </form>
+      </th>
       {{else}}
       <th>
-        <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
+        <form action="/turns/send-email/{{_id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
-          <button class="btn btn-danger btn-block btn-sm" type="submit">
+          <button  type="submit">
             notificar turno
           </button>
         </form>

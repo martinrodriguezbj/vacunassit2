@@ -9,7 +9,8 @@ const Turno = require('../models/Turnos');
 
 const { ADMINISTRADOR } = require('../helpers/Roles');
 const Turnos = require('../models/Turnos');
-
+const nodemailer = require('nodemailer');
+const SMTPConnection = require('nodemailer/lib/smtp-connection');
 
 //solictar turno
 router.get('/turns/solicitar', isAuthenticated, (req, res) => {
@@ -153,5 +154,40 @@ router.post('/turns/marcarturno/:id', isAuthenticated, async (req, res) => {
     }
 );
 
+//enviar mail 
+router.post('/turns/send-email/:id', async (req, res) => {
+    const {id} = req.params;
+    const turno = await Turno.findById(id);
+    const paciente = await User.findById(turno.user);
+    const tur = await Turno.findByIdAndUpdate(req.params.id, { "notified" : true });
+    console.log('Turno: ',turno);
+    console.log('Paciente: ',paciente);
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      auth: {
+        user: 'marlee.von7@ethereal.email',
+        pass: 'ShCRGU5HVbknQaD3Ye'
+      }
+    });
+  
+    const mailOptions = {
+      from: "Vacunassist",
+      to: paciente.email,
+      subject: "Notificación importante",
+      text: "Hola "+ paciente.name +" "+paciente.surname+ ", queríamos informarle que tiene un turno para aplicarse la vacuna "+ turno.vaccineName +" para la Fecha :"+ turno.orderDate+ " en la sede: "+turno.sede ,
+    };
+  
+    transporter.sendMail(mailOptions, async (error, info) => {
+      if (error) {
+        res.status(500).send(error.message);
+      } else {
+        
+        console.log("Email enviado.");
+        res.status(200).jsonp(req.body);
+      }
+    });
+    res.redirect("/turnos/solicitudes-turnos");
+  });
 
 module.exports = router;

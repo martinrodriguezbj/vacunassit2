@@ -10,7 +10,8 @@ const TurnosSchema = new Schema({
     attended: {type: Boolean},
     applied: {type: Boolean},
     orderDate: { type: Date, default: null},
-    vaccinator: {type: String}
+    vaccinator: {type: String},
+    notified:{type: Boolean},
 })
 
 module.exports = mongoose.model('Turnos', TurnosSchema)

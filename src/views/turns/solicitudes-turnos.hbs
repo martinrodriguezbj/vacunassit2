@@ -8,6 +8,7 @@
     <tr>
       <th scope="col">Paciente</th>
       <th scope="col">DNI</th>
+      <th scope="col">¿Es grupo de riesgo?</th>      
       <th scope="col">Vacuna</th>
       <th scope="col">Fecha Asignada</th>
       {{!-- <th scope="col">Asignar turno</th>
@@ -18,15 +19,15 @@
   <tbody>
     {{#each turnos}}
     <tr>
-      <th>{{usuario.name}}, {{usuario.surname}}</th>
+      <th>{{usuario.surname}}, {{usuario.name}}</th>
       <th>{{usuario.dni}}</th>
+      <th>{{usuario.riesgo}}</th> 
       <th>{{vaccineName}}</th>
       {{#if orderDate}}
       <th>{{orderDate}}</th>
       {{else}}
 
-      {{#if usuario.riesgo}}
-      {{!-- O IF + 60 --}}
+      {{#if usuario.riesgo }}
       <th>
         <form action="/turns/solicitudes-turnos/asignar/{{_id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
@@ -81,7 +82,5 @@
     {{/if}}
 
     </tr>
-
-
   </tbody>
 </table>

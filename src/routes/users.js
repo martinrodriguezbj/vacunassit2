@@ -48,9 +48,14 @@ router.post('/users/signup', async (req, res) => {
             req.flash('error', 'El dni se encuentra en uso');
             res.redirect('/users/signup');
         } else {
-            const newUser = new User({ name, surname, email, password, dni, address, edad, riesgo, role: ADMINISTRADOR, secretWord, validado: false});
+            const newUser = new User({ name, surname, email, password, dni, address, edad, role: PACIENTE, secretWord, validado: false});
             newUser.contra = password;
             newUser.password = await newUser.encryptPassword(password);
+            if (riesgo === 'Si' || edad >= 60) {
+                newUser.riesgo = true; 
+            }else{
+                newUser.riesgo = false; 
+            }
             await newUser.save();
             req.flash('success_msg', 'Te has registrado');
             res.redirect('/users/signin');
@@ -350,7 +355,7 @@ router.post('/users/administrador/registrar-vacunador', async (req, res) => {
     }
 });
 
-//registrar vacunador /users/administrador/registrar-vacunador
+//registrar paciente
 router.get('/users/administrador/registrar-paciente', (req, res) => {
     res.render('./users/administrador/registrarP'); 
 });
@@ -386,6 +391,11 @@ router.post('/users/administrador/registrar-paciente', async (req, res) => {
             newUser.contra = password;
             newUser.password = await newUser.encryptPassword(password);
             newUser.secretWord = "secreta"; 
+            if(riesgo === "Si"){
+                newUser.riesgo = true; 
+            }else{
+                newUser.riesgo = false; 
+            }
             await newUser.save();
             console.log(newUser); 
             req.flash('success_msg', 'Paciente registrado con éxito');

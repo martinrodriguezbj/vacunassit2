@@ -190,4 +190,52 @@ router.post('/turns/send-email/:id', async (req, res) => {
     res.redirect("/turnos/solicitudes-turnos");
   });
 
+
+//todos los turnos pasados
+router.get('/turns/turnospasados2', isAuthenticated, async (req, res) => {
+    let resultado = await Turno.aggregate([
+        {
+            $lookup: {
+                from:'users',
+                localField:'user',
+                foreignField:'_id',
+                as:'turnoUsuario'
+            }
+        },
+        { $unwind: "$turnoUsuario"}
+    ]); 
+    resultado = resultado.filter(r => r.attended == true); 
+    res.render('turns/turnospasadosadmin', {resultado});
+});
+
+//todos los turnos futuros
+router.get('/turns/turnosfuturos', isAuthenticated, async (req, res) => {
+    let resultado = await Turno.aggregate([
+        {
+            $lookup: {
+                from:'users',
+                localField:'user',
+                foreignField:'_id',
+                as:'turnoUsuario'
+            }
+        },
+        { $unwind: "$turnoUsuario"}
+    ]); 
+    resultado = resultado.filter(r => r.orderDate > Date.now()); 
+    res.render('turns/turnosfuturosadmin', {resultado});
+});
+
+//cancelar turno administrador
+router.delete('/turns/cancel2/:id', isAuthenticated, async (req, res) => {
+    const {orderDate} = await Turno.findById(req.params.id);
+    console.log(orderDate); 
+    if ( (orderDate > Date.now()) || (orderDate === null) ){
+        await Turno.findByIdAndDelete(req.params.id);
+        req.flash('success_msg', 'Turno cancelado correctamente');
+        res.redirect('/turns/turnosfuturos');
+    }else{
+        req.flash('error', 'Los turnos deben cancelarse con 24hs de anticipación.');
+        res.redirect('/turns/turnosfuturos');
+    }
+});
 module.exports = router;

@@ -1,0 +1,72 @@
+<h2>
+  <center>Turnos futuros</center>
+</h2>
+{{#if resultado}}
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">Paciente</th>
+      <th scope="col">DNI</th>
+      <th scope="col">Vacuna</th>
+      <th scope="col">Fecha Asignada</th>
+      <th scope="col">Cancelacion</th>
+      <th scope="col">Reprogramacion</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each resultado}}
+    <tr>
+      <th>{{turnoUsuario.name}}, {{turnoUsuario.surname}}</th>
+      <th>{{turnoUsuario.dni}}</th>
+      <th>{{vaccineName}}</th>
+      <th>{{orderDate}}</th>
+      <th>
+
+        <form action="/turns/cancel2/{{_id}}?_method=DELETE" method="POST">
+          <input type="hidden" name="_method" value="DELETE">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{_id}}">
+            Cancelar Turno
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal{{_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3 class="modal-title" style="color:black" id="exampleModalLabel">Está seguro de que desea cancelar
+                    el turno?</h3>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" style="color:black">
+                  {{vaccineName}}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-danger">Cancelar Turno</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </th>
+      <th>
+        <form action="/turns/marcarturno/{{_id}}" method="POST">
+          <input type="hidden" name="_method" value="PUT">
+          <button class="btn btn-danger btn-block btn-sm" type="submit">
+            Reprogramar turno
+          </button>
+        </form>
+      </th>
+    </tr>
+    {{/each}}
+    {{else}}
+    <center>
+      <h1>No hay turnos para mostrar</h1>
+    </center>
+    {{/if}}
+  </tbody>
+</table>

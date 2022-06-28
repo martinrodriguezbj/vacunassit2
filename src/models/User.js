@@ -12,7 +12,7 @@ const UserSchema = new Schema({
     date: { type: Date, default: Date.now},
     dni: {type: String, required: true},
     edad:{type:Number,required:true},
-    riesgo:{type:String,required:true},
+    riesgo:{type:Boolean,required:true},
     address: {type: String, required: false}, 
     secretWord: {type: String, required:true}, 
     contra: {type: String, required: false}, //hay que eliminiarla 

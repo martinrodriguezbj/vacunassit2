@@ -21,14 +21,14 @@ router.post('/vaccines/new-vaccines', isAuthenticated, async (req, res) => {
     const today = new Date();
     const dateToCompare = new Date(date);
     if (dateToCompare > today) {
-        errors.push({ text: 'La fecha no puede ser mayor a la actual'});
+        errors.push({ text: 'La fecha no puede ser mayor a la actual' });
     }
 
     // Si no envia name, error
     if (!name) {
         errors.push({ text: 'Debe elegir una vacuna' });
     }
-    
+
     // Validar que la vacuna no haya sido registrada
     const vaccineName = await Vaccine.findOne({ name: name, user: req.user.id });
     if (vaccineName) {
@@ -136,9 +136,14 @@ router.post('/vaccines/aplicarvacuna2/:id', isAuthenticated, async (req, res) =>
 
 router.put('/users/vacunador/cargar-datos-vacuna2/:id', isAuthenticated, async (req, res) => {
     const { name, labName, lot, vaccinator, place, date } = req.body;
-    const errors = [];
-    if (!name) {
-        errors.push({ text: 'Debe elegir una vacuna' });
+
+    // Compare if the date coming is not in the future
+    const today = new Date(Date.now());
+    const dateToCompare = new Date(date);
+
+    if (dateToCompare > today) {
+        req.flash('error', 'La fecha ingresada no puede posterior al día de hoy. Intente nuevamente.');
+        res.redirect('/users/vacunador/buscar-paciente');
     } else {
         const vaccineName = await Vaccine.findOne({ name: name, user: req.params.id });
         if (vaccineName) {
@@ -150,16 +155,15 @@ router.put('/users/vacunador/cargar-datos-vacuna2/:id', isAuthenticated, async (
             await newVaccine.save();
             req.flash('success_msg', 'Se ha registrado una nueva vacuna.');
             res.redirect('/users/vacunador/buscar-paciente');
+            console.log(newVaccine); 
         }
-
     }
-
 });
 
 //buscar vacunas de un paciente
 router.post('/vaccines/buscar-vacunas/:id', isAuthenticated, async (req, res) => {
     const paciente = await User.findById(req.params.id);
-    const vacunas = await Vaccine.find({user: paciente.id}); 
+    const vacunas = await Vaccine.find({ user: paciente.id });
     res.render('./users/vacunador/mostrar-vacunas', { paciente, vacunas });
 });
 

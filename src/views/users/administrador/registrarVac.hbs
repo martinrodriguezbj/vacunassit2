@@ -7,17 +7,17 @@
       <div class="card-body">
         <form action="/users/administrador/registrar-vacunador" method="POST">
           <div class="form-group">
-            <input type="text" class="form-control" name="name" placeholder="Nombre" value="{{name}}">
+            <input type="text" class="form-control" name="name" placeholder="Nombre" value="{{name}}" required="true">
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" name="surname" placeholder="Apellido" value="{{surname}}">
+            <input type="text" class="form-control" name="surname" placeholder="Apellido" value="{{surname}}" required="true">
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" name="dni" placeholder="Dni" value="{{dni}}">
+            <input type="text" class="form-control" name="dni" placeholder="Dni" value="{{dni}}" required="true">
           </div>
           <h3></h3>
           <div class="form group">
-            <input type="email" class="form-control" name="email" placeholder="Email" value="{{mail}}"> 
+            <input type="email" class="form-control" name="email" placeholder="Email" value="{{mail}}" required="true"> 
           </div>
           <button class="btn btn-primary btn-block">
             Registrar Vacunador

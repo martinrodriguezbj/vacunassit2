@@ -245,4 +245,6 @@ router.delete('/turns/cancel2/:id', isAuthenticated, async (req, res) => {
         res.redirect('/turns/turnosfuturos');
     }
 });
+
+
 module.exports = router;

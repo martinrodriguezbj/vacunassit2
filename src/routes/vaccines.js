@@ -124,7 +124,6 @@ router.put('/users/vacunador/cargar-datos-vacuna/:id', isAuthenticated, async (r
     const vacuna = await Vaccine.findByIdAndUpdate(req.params.id, { lot: lot, labName: labName });
     req.flash('success_msg', 'Se guardaron los datos de la vacuna');
     res.redirect('/users/vacunador/selector-sede');
-
 });
 
 //aplicar vacuna - desde 'buscar paciente' 

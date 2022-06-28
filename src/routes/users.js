@@ -302,15 +302,9 @@ router.post('/users/vacunador/buscarVac', isAuthenticated, async (req, res) => {
 
 //eliminar vacunador
 router.delete('/users/administrador/delete/:id', isAuthenticated, async (req, res) => {
-    const turnos = await Turnos.find({ vaccinator: req.params.id }).lean(); 
-    if (turnos){
-        req.flash('error', "El vacunador tiene turnos pendientes. Debe reorganizar sus turnos antes de eliminarlo."); 
-        res.redirect('/users/administrador/buscarVac');
-    }else{
-        await Users.findByIdAndDelete(req.params.id);
-        req.flash('success_msg', 'El vacunador ha sido eliminado correctamente.');
-        res.redirect('/users/administrador/buscarVac');
-    }   
+    await User.findByIdAndDelete(req.params.id);
+    req.flash('success_msg', 'El vacunador ha sido eliminado correctamente.');
+    res.redirect('/users/administrador/buscar-vacunador');  
 });
 
 //registrar vacunador /users/administrador/registrar-vacunador
@@ -326,6 +320,12 @@ router.post('/users/administrador/registrar-vacunador', async (req, res) => {
     }
     if (surname.length <= 0) {
         errors.push({ text: 'Por favor ingresar un apellido' });
+    }
+    if (email.length <= 0){
+        errors.push({ text: 'Por favor ingresar un email' });
+    }
+    if (dni.length <= 0){
+        errors.push({ text: 'Por favor ingresar un documento' });
     }
     if (errors.length > 0) {
         res.render('./users/administrador/registrarVac', { errors, name, surname, email, dni });
@@ -370,7 +370,7 @@ router.post('/users/administrador/registrar-paciente', async (req, res) => {
     if (address.length <= 0) {
         errors.push({ text: 'Por favor ingresar una dirección' });
     }
-    if (!edad ) {
+    if (edad.length <= 0) {
         errors.push({ text: 'Debe ingresar la edad del paciente' });
     }
     if (errors.length > 0) {
@@ -389,7 +389,7 @@ router.post('/users/administrador/registrar-paciente', async (req, res) => {
             await newUser.save();
             console.log(newUser); 
             req.flash('success_msg', 'Paciente registrado con éxito');
-            res.redirect('/users/administrador/registrar-vacunador');
+            res.redirect('/users/administrador/registrar-paciente');
         }
     }
 });

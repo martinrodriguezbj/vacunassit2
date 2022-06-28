@@ -10,8 +10,8 @@
       <th scope="col">DNI</th>
       <th scope="col">Vacuna</th>
       <th scope="col">Fecha Asignada</th>
-      <th scope="col">Asignar turno</th>
-      <th scope="col">Obtener turno</th>
+      {{!-- <th scope="col">Asignar turno</th>
+      <th scope="col">Obtener turno</th> --}}
       <th scope="col">Notificar turno</th>
     </tr>
   </thead>
@@ -26,44 +26,50 @@
       {{else}}
       <th>
         <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
-          <input type="hidden" name="_method" value="PUT">
-          <button class="btn btn-danger btn-block btn-sm" type="submit">
-            obetener sugerencia
+          <input type="date" min="2022-06-28" max="2022-07-07" name="_method" value="PUT">
+          <button type="submit">
+            asignar Turno
           </button>
         </form>
+        {{!-- <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
+          <input type="hidden" name="_method" value="PUT">
+          <button type="submit">
+            obetener sugerencia
+          </button>
+        </form> --}}
       </th>
       {{/if}}
-      {{#if appointed}}
+      {{!-- {{#if appointed}}
       <th>Turno Asignado</th>
       {{else}}
       <th>
         <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
-          <input type="hidden" name="_method" value="PUT">
-          <button class="btn btn-danger btn-block btn-sm" type="submit">
+          <input type="date" min="2022-06-28" max="2022-07-07" name="_method" value="PUT">
+          <button type="submit">
             asignar turno
           </button>
         </form>
       </th>
-      {{/if}}
-      <th>
+      {{/if}} --}}
+      {{!-- <th>
         <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
-          <button class="btn btn-danger btn-block btn-sm" type="submit">
+          <button type="submit">
             Obtener turno
           </button>
         </form>
-      </th>
+      </th> --}}
       {{#if notified}}
       <th>
         Turno notificado
-          </button>
+        </button>
         </form>
       </th>
       {{else}}
       <th>
         <form action="/turns/send-email/{{_id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
-          <button  type="submit">
+          <button type="submit">
             notificar turno
           </button>
         </form>

@@ -123,6 +123,13 @@ router.post('/turns/solicitudes-turnos/sugerir/:id', async (req, res) => {
     res.redirect('/turnos/solicitudes-turnos');
 })
 
+//Asignar turno - administrador
+router.post('/turns/solicitudes-turnos/asignar/:id', async (req, res) => {
+    const {id} = req.params;
+    const {date} = req.body;
+    const tur = await Turno.findByIdAndUpdate(req.params.id, { "appointed" : true ,"orderDate" : date});
+    res.redirect('/turnos/solicitudes-turnos');
+})
 
 //turnos hoy - vacunador
 router.post('/turns/turnos-hoy', isAuthenticated, async (req, res) => {

@@ -24,41 +24,32 @@
       {{#if orderDate}}
       <th>{{orderDate}}</th>
       {{else}}
+
+      {{#if usuario.riesgo}}
+      {{!-- O IF + 60 --}}
       <th>
-        <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
-          <input type="date" min="2022-06-28" max="2022-07-07" name="_method" value="PUT">
+        <form action="/turns/solicitudes-turnos/asignar/{{_id}}" method="POST">
+        <input type="hidden" name="_method" value="PUT">
+          <input type="date" min="2022-06-28" max="2022-07-07" name="date" required="true">
           <button type="submit">
             asignar Turno
           </button>
         </form>
-        {{!-- <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
-          <input type="hidden" name="_method" value="PUT">
-          <button type="submit">
-            obetener sugerencia
-          </button>
-        </form> --}}
       </th>
-      {{/if}}
-      {{!-- {{#if appointed}}
-      <th>Turno Asignado</th>
       {{else}}
       <th>
         <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
-          <input type="date" min="2022-06-28" max="2022-07-07" name="_method" value="PUT">
+        <input type="hidden" name="_method" value="PUT">
+          <input type="date" min="2022-06-28" max="2022-12-28" name="date" required="true">
           <button type="submit">
-            asignar turno
+            asignar Turno
           </button>
         </form>
       </th>
-      {{/if}} --}}
-      {{!-- <th>
-        <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
-          <input type="hidden" name="_method" value="PUT">
-          <button type="submit">
-            Obtener turno
-          </button>
-        </form>
-      </th> --}}
+      {{/if}}
+      {{/if}}
+
+      {{#if orderDate}}
       {{#if notified}}
       <th>
         Turno notificado
@@ -74,6 +65,7 @@
           </button>
         </form>
       </th>
+      {{/if}}
       {{/if}}
     </tr>
     {{/each}}

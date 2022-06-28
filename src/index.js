@@ -87,32 +87,32 @@ app.listen(app.get('port'), () => {
 
 
 
-//enviar mail, pegandole a localhost:5000/send-email desde postman con un post. 
-app.post('/send-email', (req, res) => {
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
-      user: 'marlee.von7@ethereal.email',
-      pass: 'ShCRGU5HVbknQaD3Ye'
-    }
-  });
+// //enviar mail, pegandole a localhost:5000/send-email desde postman con un post. 
+// app.post('/send-email', (req, res) => {
+//   const transporter = nodemailer.createTransport({
+//     host: 'smtp.ethereal.email',
+//     port: 587,
+//     auth: {
+//       user: 'marlee.von7@ethereal.email',
+//       pass: 'ShCRGU5HVbknQaD3Ye'
+//     }
+//   });
 
 
-  const mailOptions = {
-    from: "Vacunassist",
-    to: "pablogagliardi91@gmail.com",
-    subject: "Enviado desde nodemailer",
-    text: "Hola Mundo",
-  };
+//   const mailOptions = {
+//     from: "Vacunassist",
+//     to: "pablogagliardi91@gmail.com",
+//     subject: "Enviado desde nodemailer",
+//     text: "Hola Mundo",
+//   };
 
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      res.status(500).send(error.message);
-    } else {
-      console.log("Email enviado.");
-      res.status(200).jsonp(req.body);
-    }
-  });
-});
+//   transporter.sendMail(mailOptions, (error, info) => {
+//     if (error) {
+//       res.status(500).send(error.message);
+//     } else {
+//       console.log("Email enviado.");
+//       res.status(200).jsonp(req.body);
+//     }
+// //   });
+// });

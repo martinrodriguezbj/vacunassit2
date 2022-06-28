@@ -29,7 +29,7 @@
       {{!-- O IF + 60 --}}
       <th>
         <form action="/turns/solicitudes-turnos/asignar/{{_id}}" method="POST">
-        <input type="hidden" name="_method" value="PUT">
+          <input type="hidden" name="_method" value="PUT">
           <input type="date" min="2022-06-28" max="2022-07-07" name="date" required="true">
           <button type="submit">
             asignar Turno
@@ -39,7 +39,7 @@
       {{else}}
       <th>
         <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
-        <input type="hidden" name="_method" value="PUT">
+          <input type="hidden" name="_method" value="PUT">
           <input type="date" min="2022-06-28" max="2022-12-28" name="date" required="true">
           <button type="submit">
             asignar Turno
@@ -60,13 +60,18 @@
       <th>
         <form action="/turns/send-email/{{_id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
-          <button type="submit">
+          <button name="boton" value="notificar" type="submit">
             notificar turno
           </button>
         </form>
       </th>
       {{/if}}
       {{/if}}
+      <th>
+
+          </div>
+        </div>
+      </th>
     </tr>
     {{/each}}
     {{else}}
@@ -74,6 +79,7 @@
       <h1>No hay turnos para mostrar</h1>
     </center>
     {{/if}}
+
     </tr>
 
 

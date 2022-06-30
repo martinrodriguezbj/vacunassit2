@@ -1,6 +1,7 @@
 const express = require('express');
 const res = require('express/lib/response');
 const router = express.Router();
+const moment = require('moment');
 
 const Vaccine = require('../models/Vaccine');
 const { isAuthenticated } = require('../helpers/auth');
@@ -25,7 +26,6 @@ router.post('/turns/solicitar', isAuthenticated, async (req, res) => {
         if (!vaccineName) {
             errors.push({ text: 'Por favor seleccione una vacuna' });
         } else {
-
             const vaccName = await Turno.findOne({ vaccineName: vaccineName, user: req.user.id });
             const vaccAplied = await Vaccine.findOne({ name: vaccineName, user: req.user.id })
             if (vaccName) {
@@ -113,21 +113,42 @@ router.post('/turns/solicitudes-turnos/sugerir/:id', async (req, res) => {
     const { id } = req.params;
     const turno = await Turno.findById(id);
     const paciente = await User.findById(turno.user);
-
+    /*
     if (paciente.edad > 60 || paciente.riesgo === "Si") {
         req.flash('error', 'El paciente es paciente de riesgo');
         res.redirect('/turnos/solicitudes-turnos');
         return
     }
-    req.flash('error', 'El paciente es paciente NO  de riesgo');
+    */
+   let fecha= moment(new Date(Date.now()).setHours(08,00,0,0));
+   fecha = fecha.add(7,'d');
+   var turnop = await Turno.findOne({ orderDate : fecha })
+   while (turnop){
+    fecha = fecha.add(15,'m');
+    var turnop = await Turno.findOne({ orderDate : fecha })
+   }
+   const tur = await Turno.findByIdAndUpdate(req.params.id, { "orderDate": fecha , "appointed": true });
+   req.flash('success_msg', 'Turno asignado a paciente NO de riesgo');
     res.redirect('/turnos/solicitudes-turnos');
 })
 
 //Asignar turno - administrador
 router.post('/turns/solicitudes-turnos/asignar/:id', async (req, res) => {
     const { id } = req.params;
-    const { date } = req.body;
-    const tur = await Turno.findByIdAndUpdate(req.params.id, { "appointed": true, "orderDate": date });
+    const turno = await Turno.findById(id);
+    const paciente = await User.findById(turno.user);
+    
+   let fecha= moment(new Date(Date.now()).setHours(08,00,0,0));
+   fecha = fecha.add(1,'d');
+    var turnop = await Turno.findOne({ orderDate : fecha })
+        while (turnop){
+            fecha = fecha.add(15,'m');
+            var turnop = await Turno.findOne({ orderDate : fecha })
+            //console.log(fecha)
+            console.log(turnop);
+         }
+    const tur = await Turno.findByIdAndUpdate(req.params.id, { "orderDate": fecha , "appointed": true});
+    req.flash('success_msg', 'Turno asignado a paciente de riesgo');
     res.redirect('/turnos/solicitudes-turnos');
 })
 

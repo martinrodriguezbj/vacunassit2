@@ -109,7 +109,7 @@ router.get('/turnos/solicitudes-turnos', isAuthenticated, async (req, res) => {
     res.render('turns/solicitudes-turnos', { turnos });
 })
 
-router.post('/turns/solicitudes-turnos/sugerir/:id', async (req, res) => {
+router.post('/turns/solicitudes-turnos/asignarSinRiesgo/:id', async (req, res) => {
     const { id } = req.params;
     const turno = await Turno.findById(id);
     const paciente = await User.findById(turno.user);
@@ -121,7 +121,17 @@ router.post('/turns/solicitudes-turnos/sugerir/:id', async (req, res) => {
     }
     */
    let fecha= moment(new Date(Date.now()).setHours(08,00,0,0));
-   fecha = fecha.add(7,'d');
+   if (turno.vaccineName=="Gripe"){
+    fecha = fecha.add(6,'months');
+   }
+   if (turno.vaccineName=="Covid: dosis 1" || turno.vaccineName=="Covid: dosis 2"){
+    if (paciente.edad<18){
+        req.flash('error', 'El paciente debe ser mayor de 18 años para aplicarse la vacuna del covid');
+        res.redirect('/turnos/solicitudes-turnos');
+        return;
+    }
+    fecha = fecha.add(6,'months');
+   }
    var turnop = await Turno.findOne({ orderDate : fecha })
    while (turnop){
     fecha = fecha.add(15,'m');
@@ -133,13 +143,24 @@ router.post('/turns/solicitudes-turnos/sugerir/:id', async (req, res) => {
 })
 
 //Asignar turno - administrador
-router.post('/turns/solicitudes-turnos/asignar/:id', async (req, res) => {
+router.post('/turns/solicitudes-turnos/asignarConRiesgo/:id', async (req, res) => {
     const { id } = req.params;
     const turno = await Turno.findById(id);
     const paciente = await User.findById(turno.user);
     
    let fecha= moment(new Date(Date.now()).setHours(08,00,0,0));
-   fecha = fecha.add(1,'d');
+   if (turno.vaccineName=="Gripe"){
+    fecha = fecha.add(3,'months');
+   }
+   if (turno.vaccineName=="Covid: dosis 1" || turno.vaccineName=="Covid: dosis 2"){
+    if (paciente.edad<18){
+        req.flash('error', 'El paciente debe ser mayor de 18 años para aplicarse la vacuna del covid');
+        res.redirect('/turnos/solicitudes-turnos');
+        return;
+    }
+    fecha = fecha.add(1,'d');
+   };
+   
     var turnop = await Turno.findOne({ orderDate : fecha })
         while (turnop){
             fecha = fecha.add(15,'m');
@@ -148,7 +169,11 @@ router.post('/turns/solicitudes-turnos/asignar/:id', async (req, res) => {
             console.log(turnop);
          }
     const tur = await Turno.findByIdAndUpdate(req.params.id, { "orderDate": fecha , "appointed": true});
-    req.flash('success_msg', 'Turno asignado a paciente de riesgo');
+    if (paciente.riesgo){
+        req.flash('success_msg', 'Turno asignado a paciente de riesgo');
+    }else{
+        req.flash('success_msg', 'Turno asignado a persona mayor de 60 años');
+    }
     res.redirect('/turnos/solicitudes-turnos');
 })
 
@@ -276,6 +301,13 @@ router.delete('/turns/cancel2/:id', isAuthenticated, async (req, res) => {
         req.flash('error', 'Los turnos deben cancelarse con 24hs de anticipación.');
         res.redirect('/turns/turnosfuturos');
     }
+});
+
+//cancelar solicitud turno administrador
+router.delete('/turns/rechazarSolicitud/:id', isAuthenticated, async (req, res) => {
+    await Turno.findByIdAndDelete(req.params.id);
+    req.flash('success_msg', 'Turno rechazado correctamente');
+    res.redirect('/turnos/solicitudes-turnos');
 });
 
 

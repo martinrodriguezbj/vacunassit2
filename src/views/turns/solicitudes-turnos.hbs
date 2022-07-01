@@ -13,6 +13,9 @@
       <th scope="col">Fecha Asignada</th>
       {{!-- <th scope="col">Asignar turno</th>
       <th scope="col">Obtener turno</th> --}}
+      {{#unless appointed}}
+      <th scope="col">Rechazar solicitud</th>
+      {{/unless}}
       <th scope="col">Notificar turno</th>
     </tr>
   </thead>
@@ -21,15 +24,23 @@
     <tr>
       <th>{{usuario.surname}}, {{usuario.name}}</th>
       <th>{{usuario.dni}}</th>
-      <th>{{usuario.riesgo}}</th> 
+      <th>{{#if usuario.riesgo}}
+        <p>Si</p>
+          {{else}}
+            <p>No</p>
+          {{/if}}
+      </th> 
       <th>{{vaccineName}}</th>
       {{#if orderDate}}
       <th>{{orderDate}}</th>
       {{else}}
 
-      {{#if usuario.riesgo }}
+
+      {{!-- esMayor es un helper de handlerbars, devuelve true si el paciente es mayor de 60 años
+      o si es un paciente de riesgo --}}
+      {{#if (esMayor usuario.edad usuario.riesgo)}}
       <th>
-        <form action="/turns/solicitudes-turnos/asignar/{{_id}}" method="POST">
+        <form action="/turns/solicitudes-turnos/asignarConRiesgo/{{_id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
           <button type="submit">
             asignar Turno
@@ -38,7 +49,7 @@
       </th>
       {{else}}
       <th>
-        <form action="/turns/solicitudes-turnos/sugerir/{{_id}}" method="POST">
+        <form action="/turns/solicitudes-turnos/asignarSinRiesgo/{{_id}}" method="POST">
           <input type="hidden" name="_method" value="PUT">
           <button type="submit">
             asignar Turno
@@ -47,6 +58,26 @@
       </th>
       {{/if}}
       {{/if}}
+
+      {{#unless appointed}}
+      <th>
+        <form action="/turns/rechazarSolicitud/{{_id}}?_method=DELETE" method="POST">
+          <input type="hidden" name="_method" value="DELETE">
+          <button name="boton" value="notificar" type="submit">
+            Rechazar solicitud
+          </button>
+        </form>
+      </th>
+      {{else}}
+        <th>
+              <form action="/turns/rechazarSolicitud/{{_id}}?_method=DELETE" method="POST">
+          <input type="hidden" name="_method" value="DELETE">
+          <button name="boton" value="notificar" type="submit" disabled>
+            Rechazar solicitud
+          </button>
+        </form>
+        </th>
+      {{/unless}}
 
       {{#if orderDate}}
       {{#if notified}}

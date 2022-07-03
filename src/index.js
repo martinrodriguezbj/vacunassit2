@@ -38,6 +38,11 @@ hbs.registerHelper("esMayor", function(value, value2)
   return value > 60 || value2==true;
 });
 
+hbs.registerHelper("vec1", function(vector, indice)
+{
+  return vector[indice];
+});
+
 // Middlewares - acá van todas nuestras funciones q van a ser ejecutadas antes de que lleguen al servidor
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));

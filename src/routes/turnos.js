@@ -132,14 +132,27 @@ router.post('/turns/solicitudes-turnos/asignarSinRiesgo/:id', async (req, res) =
     }
     fecha = fecha.add(6,'months');
    }
+   let vector=[];
+   let aux=0;
    var turnop = await Turno.findOne({ orderDate : fecha })
-   while (turnop){
+
+   while (!turnop && aux<3 && fecha.day()<=5 && fecha.hour()>=8 && fecha.hour()<17){
+    vector.push(new Date(fecha));
     fecha = fecha.add(15,'m');
     var turnop = await Turno.findOne({ orderDate : fecha })
+    aux++;
+}
+   while (turnop && aux<3){
+    fecha = fecha.add(15,'m');
+    var turnop = await Turno.findOne({ orderDate : fecha })
+    while (!turnop && aux<3 && fecha.day()<=5 && fecha.hour()>=8 && fecha.hour()<17){
+        vector.push(new Date(fecha));
+        fecha = fecha.add(15,'m');
+        var turnop = await Turno.findOne({ orderDate : fecha })
+        aux++;
+    }
    }
-   const tur = await Turno.findByIdAndUpdate(req.params.id, { "orderDate": fecha , "appointed": true });
-   req.flash('success_msg', 'Turno asignado a paciente NO de riesgo');
-    res.redirect('/turnos/solicitudes-turnos');
+   res.render('turns/asignarTurno', { vector, id});
 })
 
 //Asignar turno - administrador
@@ -161,20 +174,27 @@ router.post('/turns/solicitudes-turnos/asignarConRiesgo/:id', async (req, res) =
     fecha = fecha.add(1,'d');
    };
    
+   let vector=[];
+   let aux=0;
+   var turnop = await Turno.findOne({ orderDate : fecha })
+
+   while (!turnop && aux<3 && fecha.day()<=5 && fecha.hour()>=8 && fecha.hour()<17){
+    vector.push(new Date(fecha));
+    fecha = fecha.add(15,'m');
     var turnop = await Turno.findOne({ orderDate : fecha })
-        while (turnop){
+    aux++;  
+        }
+   while (turnop && aux<3){
+        fecha = fecha.add(15,'m');
+        var turnop = await Turno.findOne({ orderDate : fecha })
+        while (!turnop && aux<3 && fecha.day()<=5 && fecha.hour()>=8 && fecha.hour()<17){
+            vector.push(new Date(fecha));
             fecha = fecha.add(15,'m');
             var turnop = await Turno.findOne({ orderDate : fecha })
-            //console.log(fecha)
-            console.log(turnop);
-         }
-    const tur = await Turno.findByIdAndUpdate(req.params.id, { "orderDate": fecha , "appointed": true});
-    if (paciente.riesgo){
-        req.flash('success_msg', 'Turno asignado a paciente de riesgo');
-    }else{
-        req.flash('success_msg', 'Turno asignado a persona mayor de 60 años');
-    }
-    res.redirect('/turnos/solicitudes-turnos');
+            aux++;
+        }
+        }
+   res.render('turns/asignarTurno', { vector, id});
 })
 
 //turnos hoy - vacunador
@@ -308,6 +328,17 @@ router.delete('/turns/rechazarSolicitud/:id', isAuthenticated, async (req, res) 
     await Turno.findByIdAndDelete(req.params.id);
     req.flash('success_msg', 'Turno rechazado correctamente');
     res.redirect('/turnos/solicitudes-turnos');
+});
+
+router.post('/turns/asignar/:id', isAuthenticated, async (req, res) => {
+    const { fecha } = req.body;
+    console.log("aca entra");
+    console.log(fecha);
+    console.log(req.params.id);
+    const tur = await Turno.findByIdAndUpdate(req.params.id, { "orderDate": fecha , "appointed": true });
+    req.flash('success_msg', 'Turno asignado');
+    res.redirect('/turnos/solicitudes-turnos');
+    
 });
 
 
